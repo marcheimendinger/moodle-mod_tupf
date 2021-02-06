@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/tupf/db" VERSION="20210206" COMMENT="XMLDB file for TUPF module"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tupf" COMMENT="Each record is one module instance and its config data.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="language1" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" COMMENT="Students' mother tongue (L1)."/>
+        <FIELD NAME="language2" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" COMMENT="Language learned by the students (L2). Also the original language of the texts."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tupf_texts" COMMENT="Each record is a text provided by the teacher and available to students for one specific module instance.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="tupfid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="text" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="tupf" TYPE="foreign" FIELDS="tupfid" REFTABLE="tupf" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="tupf_words" COMMENT="Each record is a word from a text from `tupf_texts` and its translation.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="textid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="position" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Position of the word first character in the text."/>
+        <FIELD NAME="language2raw" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Raw version of the word, as it is in the source text."/>
+        <FIELD NAME="language2simplified" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Simplified version of the word, to display while reviewing."/>
+        <FIELD NAME="language1" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="text" TYPE="foreign" FIELDS="textid" REFTABLE="tupf_texts" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="tupf_selected_words" COMMENT="Each record is a word selected in a text from `tupf_texts` for a specific student user.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="tupfid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="wordid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="showncount" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Number of times the card has been shown to the user."/>
+        <FIELD NAME="correctcount" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Number of times the user was correct after checking the word translation. Only used in test mode."/>
+        <FIELD NAME="timelastreviewed" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="tupf" TYPE="foreign" FIELDS="tupfid" REFTABLE="tupf" REFFIELDS="id"/>
+        <KEY NAME="word" TYPE="foreign" FIELDS="wordid" REFTABLE="tupf_words" REFFIELDS="id"/>
+        <KEY NAME="user" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
