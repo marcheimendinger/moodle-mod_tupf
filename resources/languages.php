@@ -1,10 +1,13 @@
 <?php
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
- * All supported languages in TUPF.
+ * All supported languages by the module.
+ *
+ * @package mod_tupf
+ * @author Marc Heimendinger
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 $tupf_languages = [
     'ab' => 'Abkhazian',

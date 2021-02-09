@@ -1,10 +1,12 @@
 <?php
 
+// General
 $string['modulename'] = 'TUPF';
 $string['pluginname'] = 'TUPF';
 $string['modulenameplural'] = 'TUPFs';
 $string['modulename_help'] = 'Text Understanding with Personalized Flashcards';
 
+// Module settings (in `mod_form.php`)
 $string['texts'] = 'Texts';
 $string['text'] = 'Text';
 $string['textno'] = 'Text {no}';
@@ -20,3 +22,9 @@ You cannot edit these texts after submission.
 
 If you leave some of the text fields blank, they won\'t be displayed. If you need more, click the "Insert one more text field" button as many times as necessary.';
 $string['addtextfield'] = 'Insert one more text field';
+
+// `view.php`
+$string['errorpendingtexts'] = 'This activity is not ready yet. Come back in a little while.';
+$string['errornojavascript'] = 'JavaScript is required for this module.';
+$string['wordsselection'] = 'Words Selection';
+$string['wordsselection_help'] = 'Click on words you don\'t know and you want to learn. You can click again to deselect a word. When you\'re happy with your selection, click on Submit. You won\'t be able to change your selection after submitting it.';
