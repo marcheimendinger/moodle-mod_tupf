@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Displays a TUPF instance.
+ * Entry point in the user interface of a TUPF instance for a standard (e.g. student) user.
  *
  * Two possibilities:
  *  - New student: select words from a randomly selected text.
@@ -30,11 +30,12 @@ $context = context_module::instance($cm->id);
 require_capability('mod/tupf:review', $context);
 
 $PAGE->set_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
-$PAGE->set_context($context);
 $PAGE->set_title($course->shortname.': '.$tupf->name);
 $PAGE->set_heading($course->fullname);
 
-echo $OUTPUT->header();
+$output = $PAGE->get_renderer('mod_tupf');
+
+echo $output->header();
 
 // Shows error if texts are not ready (e.g. translated) yet.
 if (!$DB->record_exists('tupf_texts', ['tupfid' => $tupf->id, 'translated' => true]) ||
@@ -55,49 +56,18 @@ if (!empty($selectedwordsidsstring) &&
 }
 
 // Shows error if JavaScript is disabled.
-echo '<noscript><div class="alert alert-danger" role="alert">';
-echo get_string('errornojavascript', 'tupf');
-echo '</div></noscript>';
+echo $output->no_javascript_error();
 
 if ($DB->record_exists('tupf_selected_words', ['tupfid' => $tupf->id, 'userid' => $USER->id])) { // Flashcards
     echo html_writer::tag('h1', 'Flashcards');
 } else { // Words selection
-    $PAGE->requires->js_call_amd('mod_tupf/wordsselection', 'init');
-
-    echo html_writer::tag('h1', get_string('wordsselection', 'tupf'));
-    echo html_writer::tag('p', get_string('wordsselection_help', 'tupf'));
-
     $textsids = $DB->get_fieldset_select('tupf_texts', 'id', 'tupfid = ? AND translated = TRUE', [$tupf->id]);
     shuffle($textsids);
     $textid = $textsids[0];
     $text = $DB->get_record('tupf_texts', ['id' => $textid])->text;
     $words = $DB->get_records('tupf_words', ['textid' => $textid], 'position');
 
-    $offset = 0;
-    foreach ($words as $word) {
-        $linkStart = '<a href="#" data-word-id="'.$word->id.'" class="tupf-word">';
-        $startPosition = $word->position + $offset;
-        $text = substr_replace($text, $linkStart, $startPosition, 0);
-        $offset += strlen($linkStart);
-
-        $linkEnd = '</a>';
-        $endPosition = $word->position + strlen($word->language2raw) + $offset;
-        $text = substr_replace($text, $linkEnd, $endPosition, 0);
-        $offset += strlen($linkEnd);
-    }
-
-    echo $text;
-
-    $form = html_writer::start_tag('form', [
-        'id' => 'tupf-words-selection-form',
-        'action' => $PAGE->url,
-        'method' => 'post'
-    ]);
-    $form .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'selected-words']);
-    $form .= html_writer::tag('input', null, ['type' => 'button', 'id' => 'tupf-submit-button', 'class' => 'btn btn-primary', 'value' => get_string('submit')]);
-    $form .= html_writer::end_tag('form');
-
-    echo $form;
+    echo $output->words_selection($text, $words);
 }
 
-echo $OUTPUT->footer();
+echo $output->footer();
