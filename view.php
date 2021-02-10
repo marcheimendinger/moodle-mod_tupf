@@ -12,26 +12,11 @@
  */
 
 require_once(__DIR__.'/../../config.php');
+require_once('locallib.php');
 
 $coursemoduleid = required_param('id', PARAM_INT);
 
-if (!$cm = get_coursemodule_from_id('tupf', $coursemoduleid)) {
-    print_error('invalidcoursemodule');
-}
-if (!$course = $DB->get_record('course', ['id' => $cm->course])) {
-    print_error('coursemisconf');
-}
-if (!$tupf = $DB->get_record('tupf', ['id' => $cm->instance])) {
-    print_error('invalidcoursemodule');
-}
-
-require_course_login($course, true, $cm);
-$context = context_module::instance($cm->id);
-require_capability('mod/tupf:review', $context);
-
-$PAGE->set_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
-$PAGE->set_title($course->shortname.': '.$tupf->name);
-$PAGE->set_heading($course->fullname);
+$tupf = authenticate_and_get_tupf('/mod/tupf/view.php', $coursemoduleid);
 
 $output = $PAGE->get_renderer('mod_tupf');
 
