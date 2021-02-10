@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Capabilities for the module.
+ *
+ * @package mod_tupf
+ * @author Marc Heimendinger
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [

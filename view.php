@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entry point in the user interface of a TUPF instance for a standard (e.g. student) user.
+ * Entry point in the user interface of a module instance.
  *
  * Two possibilities:
  *  - New student: select words from a randomly selected text.

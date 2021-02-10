@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Private TUPF module utility functions.
+ * Private module utility functions.
  *
  * @package mod_tupf
  * @author Marc Heimendinger
@@ -16,8 +16,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $coursemoduleid Course module ID.
  * @return object
  */
-function authenticate_and_get_tupf(string $url, int $coursemoduleid)
-{
+function authenticate_and_get_tupf(string $url, int $coursemoduleid) {
     global $DB, $PAGE;
 
     if (!$cm = get_coursemodule_from_id('tupf', $coursemoduleid)) {

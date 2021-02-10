@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Module localization in English.
+ *
+ * @package mod_tupf
+ * @author Marc Heimendinger
+ */
+
 // General
 $string['modulename'] = 'TUPF';
 $string['pluginname'] = 'TUPF';

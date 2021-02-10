@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Module settings.
+ *
+ * @package mod_tupf
+ * @author Marc Heimendinger
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');

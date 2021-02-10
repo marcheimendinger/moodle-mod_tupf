@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Interaction with the Moodle core.
+ *
+ * @package mod_tupf
+ * @author Marc Heimendinger
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 /**

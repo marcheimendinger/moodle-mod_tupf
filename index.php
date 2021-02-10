@@ -1,7 +1,7 @@
 <?php
 
 /**
- * List of all TUPF instances in course.
+ * Lists all module instances for a given course.
  *
  * @package mod_tupf
  * @author Marc Heimendinger

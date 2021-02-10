@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Defines the HTML renderer for the TUPF module.
+ * HTML renderer for the module.
  *
  * @package mod_tupf
  * @author Marc Heimendinger
@@ -32,16 +32,16 @@ class mod_tupf_renderer extends plugin_renderer_base {
     /**
      * Builds the words selection widget.
      *
-     * @param string $text
-     * @param [string] $words
+     * @param string $text HTML text.
+     * @param [string] $words List of translated words.
      * @return string HTML content.
      */
-    public function words_selection($text, $words) {
+    public function words_selection(string $text, array $words) {
         $this->page->requires->js_call_amd('mod_tupf/wordsselection', 'init');
 
         $output = '';
 
-        $output .= $this->output->heading(format_string(get_string('wordsselection', 'tupf')), 2);
+        $output .= $this->output->heading(get_string('wordsselection', 'tupf'), 2);
         $output .= html_writer::tag('p', get_string('wordsselection_help', 'tupf'));
 
         $textoutput = $text;

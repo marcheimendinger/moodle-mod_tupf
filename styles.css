@@ -1,3 +1,10 @@
+/**
+ * Custom styling for the module.
+ *
+ * @package mod_tupf
+ * @author Marc Heimendinger
+ */
+
 a.tupf-word {
     color: black;
 }
