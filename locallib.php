@@ -37,5 +37,11 @@ function authenticate_and_get_tupf(string $url, int $coursemoduleid) {
     $PAGE->set_title($course->shortname.': '.$tupf->name);
     $PAGE->set_heading($course->fullname);
 
+    // Throws an error if texts are not ready (e.g. translated) yet.
+    if (!$DB->record_exists('tupf_texts', ['tupfid' => $tupf->id]) ||
+            $DB->record_exists('tupf_texts', ['tupfid' => $tupf->id, 'translated' => false])) {
+        print_error('errorpendingtexts', 'tupf');
+    }
+
     return $tupf;
 }

@@ -22,12 +22,6 @@ $output = $PAGE->get_renderer('mod_tupf');
 
 echo $output->header();
 
-// Shows error if texts are not ready (e.g. translated) yet.
-if (!$DB->record_exists('tupf_texts', ['tupfid' => $tupf->id, 'translated' => true]) ||
-        $DB->record_exists('tupf_texts', ['tupfid' => $tupf->id, 'translated' => false])) {
-    print_error('errorpendingtexts', 'tupf');
-}
-
 // Inserts words selection in database if submitted.
 $selectedwordsidsstring = optional_param('selected-words', '', PARAM_TEXT);
 if (!empty($selectedwordsidsstring) &&
@@ -40,11 +34,8 @@ if (!empty($selectedwordsidsstring) &&
     $DB->insert_records('tupf_selected_words', $selectedwordsoject);
 }
 
-// Shows error if JavaScript is disabled.
-echo $output->no_javascript_error();
-
-if ($DB->record_exists('tupf_selected_words', ['tupfid' => $tupf->id, 'userid' => $USER->id])) { // Flashcards
-    echo html_writer::tag('h1', 'Flashcards');
+if ($DB->record_exists('tupf_selected_words', ['tupfid' => $tupf->id, 'userid' => $USER->id])) { // Words review
+    echo $output->home_buttons($coursemoduleid, $tupf->name);
 } else { // Words selection
     $textsids = $DB->get_fieldset_select('tupf_texts', 'id', 'tupfid = ? AND translated = TRUE', [$tupf->id]);
     shuffle($textsids);

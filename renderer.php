@@ -15,11 +15,25 @@ defined('MOODLE_INTERNAL') || die;
 class mod_tupf_renderer extends plugin_renderer_base {
 
     /**
+     * Overrides `header()` to add an error if JavaScript is disabled.
+     *
+     * @return string HTML content.
+     */
+    public function header() {
+        $output = '';
+
+        $output .= parent::header();
+        $output .= $this->no_javascript_error();
+
+        return $output;
+    }
+
+    /**
      * Builds an error alert displayed if JavaScript is disabled.
      *
      * @return string HTML content.
      */
-    public function no_javascript_error() {
+    private function no_javascript_error() {
         $message = html_writer::tag(
             'a',
             get_string('errornojavascript', 'tupf'),
@@ -27,6 +41,25 @@ class mod_tupf_renderer extends plugin_renderer_base {
         );
         $div = html_writer::div($message, 'alert alert-danger');
         return html_writer::tag('noscript', $div);
+    }
+
+    /**
+     * Builds the home buttons widget.
+     *
+     * @param integer $coursemoduleid Course module ID.
+     * @param string $tupfname Module instance name.
+     * @return string HTML content.
+     */
+    public function home_buttons(int $coursemoduleid, string $tupfname) {
+        $output = '';
+
+        $output .= $this->output->heading($tupfname, 2);
+
+        $reviewurl = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
+        $buttons = html_writer::tag('a', get_string('startreview', 'tupf'), ['href' => $reviewurl, 'class' => 'btn btn-secondary']);
+        $output .= html_writer::div($buttons, 'text-center');
+
+        return $output;
     }
 
     /**
@@ -77,6 +110,55 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $output .= html_writer::end_tag('form');
 
         return $output;
+    }
+
+    /**
+     * Builds the words review heading widget.
+     *
+     * @return string HTML content.
+     */
+    public function words_review_heading() {
+        return $this->output->heading(get_string('wordsreview', 'tupf'), 2);
+    }
+
+    /**
+     * Builds words review end buttons widget.
+     *
+     * @param integer $coursemoduleid Course module ID.
+     * @return string HTML content.
+     */
+    public function words_review_end_buttons(int $coursemoduleid) {
+        $output = '';
+
+        $output .= html_writer::tag('p', get_string('reviewend', 'tupf'));
+
+        $viewurl = new moodle_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
+        $reviewurl = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
+
+        $buttons = html_writer::tag('a', get_string('backhome', 'tupf'), ['href' => $viewurl, 'class' => 'btn btn-secondary mx-2']);
+        $buttons .= html_writer::tag('a', get_string('restartreview', 'tupf'), ['href' => $reviewurl, 'class' => 'btn btn-secondary mx-2']);
+        $output .= html_writer::div($buttons, 'text-center');
+
+        return $output;
+    }
+
+    /**
+     * Builds words review flashcard widget.
+     *
+     * @param integer $coursemoduleid Course module ID.
+     * @param $word Word object from the `tupf_words` table.
+     * @return string HTML content.
+     */
+    public function words_review_flashcard(int $coursemoduleid, $word) {
+        $content = '';
+
+        $content .= html_writer::tag('p', 'l1: '.$word->language1);
+        $content .= html_writer::tag('p', 'l2: '.$word->language2simplified);
+
+        $url = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
+        $content .= html_writer::tag('a', get_string('next'), ['href' => $url, 'class' => 'btn btn-secondary']);
+
+        return html_writer::div($content, 'text-center');
     }
 
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/tupf/db" VERSION="20210208" COMMENT="XMLDB file for TUPF module"
+<XMLDB PATH="mod/tupf/db" VERSION="20210211" COMMENT="XMLDB file for TUPF module"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -55,8 +55,8 @@
         <FIELD NAME="tupfid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="wordid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="showncount" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Number of times the card has been shown to the user."/>
-        <FIELD NAME="correctcount" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Number of times the user was correct after checking the word translation. Only used in test mode."/>
+        <FIELD NAME="showncount" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of times the card has been shown to the user."/>
+        <FIELD NAME="correctcount" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of times the user was correct after checking the word translation. Only used in test mode."/>
         <FIELD NAME="timelastreviewed" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
