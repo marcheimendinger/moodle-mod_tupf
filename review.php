@@ -45,10 +45,6 @@ function get_word_flashcard(int $wordid) {
         print_error('notavailable');
     }
 
-    if (empty($word)) {
-        print_error('notavailable');
-    }
-
     return $output->words_review_flashcard($coursemoduleid, $word);
 }
 

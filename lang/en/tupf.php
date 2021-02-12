@@ -40,6 +40,7 @@ $string['wordsselection_help'] = 'Click on words you don\'t know and you want to
 
 // `review.php`
 $string['wordsreview'] = 'Words Review';
+$string['wordsreview_help'] = 'Click on the card to reveal its translation.';
 $string['reviewend'] = 'Good job! You reviewed all your words.';
 $string['backhome'] = 'Back home';
 $string['restartreview'] = 'Restart reviewing words';

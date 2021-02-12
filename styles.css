@@ -8,3 +8,46 @@
 a.tupf-word {
     color: black;
 }
+
+.tupf-flashcard-container {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    color: black;
+}
+
+.tupf-flashcard-container:hover {
+    cursor: pointer;
+}
+
+.tupf-flashcard-container,
+.tupf-flashcard-front,
+.tupf-flashcard-back {
+    width: 200px;
+    height: 100px;
+}
+
+.tupf-flashcard-inner {
+    transition: 0.8s;
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+.tupf-flashcard-front,
+.tupf-flashcard-back {
+    backface-visibility: hidden;
+    transition: 0.8s;
+    transform-style: preserve-3d;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #ced4da;
+}
+
+.tupf-flashcard-front {
+    z-index: 2;
+    transform: rotateY(0deg);
+}
+
+.tupf-flashcard-back {
+    transform: rotateY(-180deg);
+}

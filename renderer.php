@@ -122,27 +122,6 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds words review end buttons widget.
-     *
-     * @param integer $coursemoduleid Course module ID.
-     * @return string HTML content.
-     */
-    public function words_review_end_buttons(int $coursemoduleid) {
-        $output = '';
-
-        $output .= html_writer::tag('p', get_string('reviewend', 'tupf'));
-
-        $viewurl = new moodle_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
-        $reviewurl = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
-
-        $buttons = html_writer::tag('a', get_string('backhome', 'tupf'), ['href' => $viewurl, 'class' => 'btn btn-secondary mx-2']);
-        $buttons .= html_writer::tag('a', get_string('restartreview', 'tupf'), ['href' => $reviewurl, 'class' => 'btn btn-secondary mx-2']);
-        $output .= html_writer::div($buttons, 'text-center');
-
-        return $output;
-    }
-
-    /**
      * Builds words review flashcard widget.
      *
      * @param integer $coursemoduleid Course module ID.
@@ -150,13 +129,47 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * @return string HTML content.
      */
     public function words_review_flashcard(int $coursemoduleid, $word) {
+        $this->page->requires->js_call_amd('mod_tupf/flashcard', 'init');
+
         $content = '';
 
-        $content .= html_writer::tag('p', 'l1: '.$word->language1);
-        $content .= html_writer::tag('p', 'l2: '.$word->language2simplified);
+        $content .= html_writer::tag('p', get_string('wordsreview_help', 'tupf'));
+
+        $front = html_writer::tag('p', $word->language1, ['class' => 'align-self-center mb-0']);
+        $front = html_writer::div($front, 'tupf-flashcard-front d-flex justify-content-center');
+
+        $back = html_writer::tag('p', $word->language2simplified, ['class' => 'align-self-center mb-0']);
+        $back = html_writer::div($back, 'tupf-flashcard-back d-flex justify-content-center');
+
+        $flashcard = html_writer::div($front.$back, 'tupf-flashcard-inner');
+        $flashcard = html_writer::div($flashcard, 'tupf-flashcard-container mx-auto');
+
+        $centercontent .= $flashcard;
 
         $url = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
-        $content .= html_writer::tag('a', get_string('next'), ['href' => $url, 'class' => 'btn btn-secondary']);
+        $centercontent .= html_writer::tag('a', get_string('next'), ['href' => $url, 'class' => 'btn btn-secondary mt-4']);
+
+        $content .= html_writer::div($centercontent, 'text-center');
+
+        return $content;
+    }
+
+    /**
+     * Builds words review end buttons widget.
+     *
+     * @param integer $coursemoduleid Course module ID.
+     * @return string HTML content.
+     */
+    public function words_review_end_buttons(int $coursemoduleid) {
+        $content = '';
+
+        $content .= html_writer::tag('p', get_string('reviewend', 'tupf'));
+
+        $viewurl = new moodle_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
+        $reviewurl = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
+
+        $content .= html_writer::tag('a', get_string('backhome', 'tupf'), ['href' => $viewurl, 'class' => 'btn btn-secondary mx-2']);
+        $content .= html_writer::tag('a', get_string('restartreview', 'tupf'), ['href' => $reviewurl, 'class' => 'btn btn-secondary mx-2']);
 
         return html_writer::div($content, 'text-center');
     }
