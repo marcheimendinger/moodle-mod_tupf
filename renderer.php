@@ -126,9 +126,11 @@ class mod_tupf_renderer extends plugin_renderer_base {
      *
      * @param integer $coursemoduleid Course module ID.
      * @param $word Word object from the `tupf_words` table.
+     * @param integer $wordindex Position of the currently displayed word.
+     * @param integer $totalwordscount Count of all words to review.
      * @return string HTML content.
      */
-    public function words_review_flashcard(int $coursemoduleid, $word) {
+    public function words_review_flashcard(int $coursemoduleid, $word, int $wordindex, int $totalwordscount) {
         $this->page->requires->js_call_amd('mod_tupf/flashcard', 'init');
 
         $content = '';
@@ -144,10 +146,16 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $flashcard = html_writer::div($front.$back, 'tupf-flashcard-inner');
         $flashcard = html_writer::div($flashcard, 'tupf-flashcard-container mx-auto');
 
-        $centercontent .= $flashcard;
+        $centercontent = $flashcard;
 
-        $url = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
-        $centercontent .= html_writer::tag('a', get_string('next'), ['href' => $url, 'class' => 'btn btn-secondary mt-4']);
+        $urlprevious = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid, 'previous' => true]);
+        $previousdisabled = $wordindex == 1 ? ' disabled' : '';
+        $centercontent .= html_writer::tag('a', get_string('previous'), ['href' => $urlprevious, 'class' => 'btn btn-secondary mx-2 my-4'.$previousdisabled]);
+
+        $urlnext = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
+        $centercontent .= html_writer::tag('a', get_string('next'), ['href' => $urlnext, 'class' => 'btn btn-secondary mx-2 my-4']);
+
+        $centercontent .= html_writer::tag('p', $wordindex.' / '.$totalwordscount, ['class' => 'small']);
 
         $content .= html_writer::div($centercontent, 'text-center');
 

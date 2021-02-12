@@ -11,12 +11,24 @@ defined('MOODLE_INTERNAL') || die();
 
 $definitions = [
     /**
-     * This cache object is used when a user is reviewing words.
+     * Contains all words IDs (for each module instance) when a user is reviewing words.
      *
      * @key int A TUPF instance ID (`id` from `tupf` table).
      * @value [int] An array of words IDs (`id` from `tupf_words` table).
      */
-    'reviewingwords' => [
+    'reviewingwordsids' => [
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'simpledata' => true,
+    ],
+
+    /**
+     * Contains the index of the current word to review (for each module instance) when a user is reviewing words.
+     *
+     * @key int A TUPF instance ID (`id` from `tupf` table).
+     * @value int An array index (corresponding to an element in `reviewingwords` cache).
+     */
+    'reviewingwordindex' => [
         'mode' => cache_store::MODE_SESSION,
         'simplekeys' => true,
         'simpledata' => true,

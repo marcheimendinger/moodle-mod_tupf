@@ -11,6 +11,7 @@ require_once(__DIR__.'/../../config.php');
 require_once('locallib.php');
 
 $coursemoduleid = required_param('id', PARAM_INT);
+$gotoprevious = optional_param('previous', 'false', PARAM_BOOL);
 
 $tupf = authenticate_and_get_tupf('/mod/tupf/view.php', $coursemoduleid);
 
@@ -20,11 +21,15 @@ echo $output->header();
 
 echo $output->words_review_heading();
 
-$cache = cache::make('mod_tupf', 'reviewingwords');
-$reviewingwordsids = $cache->get($tupf->id);
+$reviewingwordsidscache = cache::make('mod_tupf', 'reviewingwordsids');
+$reviewingwordindexcache = cache::make('mod_tupf', 'reviewingwordindex');
 
-function get_word_flashcard(int $wordid) {
+$reviewingwordindex = $reviewingwordindexcache->get($tupf->id);
+
+function get_word_flashcard(array $wordsids, int $wordindex) {
     global $DB, $USER, $output, $coursemoduleid, $tupf;
+
+    $wordid = $wordsids[$wordindex];
 
     $selectedword = $DB->get_record(
         'tupf_selected_words',
@@ -45,14 +50,14 @@ function get_word_flashcard(int $wordid) {
         print_error('notavailable');
     }
 
-    return $output->words_review_flashcard($coursemoduleid, $word);
+    return $output->words_review_flashcard($coursemoduleid, $word, $wordindex + 1, count($wordsids));
 }
 
-if ($reviewingwordsids === false) { // Start review.
+if ($reviewingwordindex === false) { // Start review.
     $wordsids = array_keys($DB->get_records_menu(
         'tupf_selected_words',
         ['tupfid' => $tupf->id, 'userid' => $USER->id],
-        'timelastreviewed DESC', // Oldest words first (we start at the end of the array).
+        'timelastreviewed ASC', // Oldest or never reviewed words first.
         'wordid'
     ));
 
@@ -60,19 +65,31 @@ if ($reviewingwordsids === false) { // Start review.
         print_error('notavailable');
     }
 
-    $wordid = array_pop($wordsids);
-    $cache->set($tupf->id, $wordsids);
+    $reviewingwordsidscache->set($tupf->id, $wordsids);
 
-    echo get_word_flashcard($wordid);
-} else if (empty($reviewingwordsids)) { // End review.
-    $cache->delete($tupf->id);
+    $wordindex = 0;
+    $reviewingwordindexcache->set($tupf->id, $wordindex);
 
-    echo $output->words_review_end_buttons($coursemoduleid);
+    echo get_word_flashcard($wordsids, $wordindex);
 } else { // During a review.
-    $wordid = array_pop($reviewingwordsids);
-    $cache->set($tupf->id, $reviewingwordsids);
+    $reviewingwordsids = $reviewingwordsidscache->get($tupf->id);
 
-    echo get_word_flashcard($wordid);
+    if ($gotoprevious === 1) {
+        $reviewingwordindex -= 1;
+    } else {
+        $reviewingwordindex += 1;
+    }
+
+    $reviewingwordindexcache->set($tupf->id, $reviewingwordindex);
+
+    if ($reviewingwordindex < 0 || $reviewingwordindex >= count($reviewingwordsids)) { // End review.
+        $reviewingwordsidscache->delete($tupf->id);
+        $reviewingwordindexcache->delete($tupf->id);
+
+        echo $output->words_review_end_buttons($coursemoduleid);
+    } else {
+        echo get_word_flashcard($reviewingwordsids, $reviewingwordindex);
+    }
 }
 
 echo $output->footer();
