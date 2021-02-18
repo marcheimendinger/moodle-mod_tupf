@@ -44,6 +44,18 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Builds a centered button to go back to instance module home page.
+     *
+     * @param integer $coursemoduleid Course module ID.
+     * @return string HTML content.
+     */
+    public function back_home_button(int $coursemoduleid) {
+        $url = new moodle_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
+        $button = html_writer::tag('a', get_string('backhome', 'tupf'), ['href' => $url, 'class' => 'btn btn-secondary']);
+        return html_writer::div($button, 'text-center my-4');
+    }
+
+    /**
      * Builds the home buttons widget.
      *
      * @param integer $coursemoduleid Course module ID.
@@ -55,9 +67,15 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output .= $this->output->heading($tupfname, 2);
 
+        $buttons = '';
+
         $reviewurl = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
-        $buttons = html_writer::tag('a', get_string('startreview', 'tupf'), ['href' => $reviewurl, 'class' => 'btn btn-secondary']);
-        $output .= html_writer::div($buttons, 'text-center');
+        $buttons .= html_writer::tag('a', get_string('startreview', 'tupf'), ['href' => $reviewurl, 'class' => 'btn btn-secondary mx-2']);
+
+        $wordsurl = new moodle_url('/mod/tupf/words.php', ['id' => $coursemoduleid]);
+        $buttons .= html_writer::tag('a', get_string('displaywordslist', 'tupf'), ['href' => $wordsurl, 'class' => 'btn btn-secondary mx-2']);
+
+        $output .= html_writer::div($buttons, 'text-center my-4');
 
         return $output;
     }
@@ -113,6 +131,41 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Builds the words list widget.
+     *
+     * @param array $words Selected words for the current user.
+     * @return string HTML content.
+     */
+    public function words_list(array $words) {
+        $output = '';
+
+        $output .= $this->output->heading(get_string('selectedwords', 'tupf'), 2);
+
+        $table = new html_table();
+        $table->attributes['class'] = 'generaltable mod_index';
+
+        $table->head  = [
+            get_string('language1', 'tupf'),
+            get_string('language2', 'tupf'),
+            get_string('showncount', 'tupf'),
+            get_string('timelastreviewed', 'tupf'),
+        ];
+
+        foreach ($words as $word) {
+            $table->data[] = [
+                format_string($word->language1),
+                format_string($word->language2simplified),
+                $word->showncount,
+                userdate($word->timelastreviewed),
+            ];
+        }
+
+        $output .= html_writer::table($table);
+
+        return $output;
+    }
+
+    /**
      * Builds the words review heading widget.
      *
      * @return string HTML content.
@@ -133,9 +186,9 @@ class mod_tupf_renderer extends plugin_renderer_base {
     public function words_review_flashcard(int $coursemoduleid, $word, int $wordindex, int $totalwordscount) {
         $this->page->requires->js_call_amd('mod_tupf/flashcard', 'init');
 
-        $content = '';
+        $output = '';
 
-        $content .= html_writer::tag('p', get_string('wordsreview_help', 'tupf'));
+        $output .= html_writer::tag('p', get_string('wordsreview_help', 'tupf'));
 
         $front = html_writer::tag('p', $word->language1, ['class' => 'align-self-center mb-0']);
         $front = html_writer::div($front, 'tupf-flashcard-front d-flex justify-content-center');
@@ -157,9 +210,9 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $centercontent .= html_writer::tag('p', $wordindex.' / '.$totalwordscount, ['class' => 'small']);
 
-        $content .= html_writer::div($centercontent, 'text-center');
+        $output .= html_writer::div($centercontent, 'text-center');
 
-        return $content;
+        return $output;
     }
 
     /**

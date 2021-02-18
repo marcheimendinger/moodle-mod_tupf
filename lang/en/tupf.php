@@ -13,6 +13,7 @@ $string['pluginname'] = 'TUPF';
 $string['modulenameplural'] = 'TUPFs';
 $string['modulename_help'] = 'Text Understanding with Personalized Flashcards';
 $string['cachedef_reviewingwords'] = 'Stores lists of words to review.';
+$string['backhome'] = 'Back home';
 
 // Module settings (in `mod_form.php`)
 $string['texts'] = 'Texts';
@@ -35,6 +36,7 @@ $string['addtextfield'] = 'Insert one more text field';
 $string['errorpendingtexts'] = 'This activity is not ready yet. Come back in a little while.';
 $string['errornojavascript'] = 'JavaScript is required for this module.';
 $string['startreview'] = 'Start reviewing words';
+$string['displaywordslist'] = 'Show all selected words';
 $string['wordsselection'] = 'Words Selection';
 $string['wordsselection_help'] = 'Click on words you don\'t know and you want to learn. You can click again to deselect a word. When you\'re happy with your selection, click on Submit. You won\'t be able to change your selection after submitting it.';
 
@@ -42,5 +44,11 @@ $string['wordsselection_help'] = 'Click on words you don\'t know and you want to
 $string['wordsreview'] = 'Words Review';
 $string['wordsreview_help'] = 'Click on the card to reveal its translation.';
 $string['reviewend'] = 'Good job! You reviewed all your words.';
-$string['backhome'] = 'Back home';
 $string['restartreview'] = 'Restart reviewing words';
+
+// `words.php`
+$string['selectedwords'] = 'Selected Words';
+$string['language1'] = 'Language 1';
+$string['language2'] = 'Language 2';
+$string['showncount'] = 'Shown Count';
+$string['timelastreviewed'] = 'Time Last Reviewed';
