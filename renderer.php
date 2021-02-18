@@ -190,25 +190,25 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output .= html_writer::tag('p', get_string('wordsreview_help', 'tupf'));
 
-        $front = html_writer::tag('p', $word->language1, ['class' => 'align-self-center mb-0']);
+        $front = html_writer::tag('h4', $word->language1, ['class' => 'align-self-center mb-0']);
         $front = html_writer::div($front, 'tupf-flashcard-front d-flex justify-content-center');
 
-        $back = html_writer::tag('p', $word->language2simplified, ['class' => 'align-self-center mb-0']);
+        $back = html_writer::tag('h4', $word->language2simplified, ['class' => 'align-self-center mb-0']);
         $back = html_writer::div($back, 'tupf-flashcard-back d-flex justify-content-center');
 
         $flashcard = html_writer::div($front.$back, 'tupf-flashcard-inner');
-        $flashcard = html_writer::div($flashcard, 'tupf-flashcard-container mx-auto');
+        $flashcard = html_writer::div($flashcard, 'tupf-flashcard-container mx-auto mb-4');
 
         $centercontent = $flashcard;
 
         $urlprevious = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid, 'previous' => true]);
         $previousdisabled = $wordindex == 1 ? ' disabled' : '';
-        $centercontent .= html_writer::tag('a', get_string('previous'), ['href' => $urlprevious, 'class' => 'btn btn-secondary mx-2 my-4'.$previousdisabled]);
+        $centercontent .= html_writer::tag('a', get_string('previous'), ['href' => $urlprevious, 'class' => 'mx-2'.$previousdisabled]);
 
         $urlnext = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
-        $centercontent .= html_writer::tag('a', get_string('next'), ['href' => $urlnext, 'class' => 'btn btn-secondary mx-2 my-4']);
+        $centercontent .= html_writer::tag('a', get_string('next'), ['href' => $urlnext, 'class' => 'mx-2']);
 
-        $centercontent .= html_writer::tag('p', $wordindex.' / '.$totalwordscount, ['class' => 'small']);
+        $centercontent .= html_writer::tag('p', $wordindex.' / '.$totalwordscount, ['class' => 'small my-2']);
 
         $output .= html_writer::div($centercontent, 'text-center');
 
