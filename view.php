@@ -15,6 +15,7 @@ require_once(__DIR__.'/../../config.php');
 require_once('locallib.php');
 
 $coursemoduleid = required_param('id', PARAM_INT);
+$selectedwordsidsstring = optional_param('selected-words', '', PARAM_TEXT);
 
 $tupf = authenticate_and_get_tupf('/mod/tupf/view.php', $coursemoduleid);
 
@@ -23,7 +24,6 @@ $output = $PAGE->get_renderer('mod_tupf');
 echo $output->header();
 
 // Inserts words selection in database if submitted.
-$selectedwordsidsstring = optional_param('selected-words', '', PARAM_TEXT);
 if (!empty($selectedwordsidsstring) &&
         !$DB->record_exists('tupf_selected_words', ['tupfid' => $tupf->id, 'userid' => $USER->id])) {
     $selectedwordsids = explode(',', $selectedwordsidsstring);
