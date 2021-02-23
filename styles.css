@@ -9,6 +9,12 @@ a.tupf-word {
     color: black;
 }
 
+a.tupf-word.mark {
+    padding: 0;
+    color: white;
+    background-color: black;
+}
+
 .tupf-flashcard-container {
     perspective: 1000px;
     transform-style: preserve-3d;
