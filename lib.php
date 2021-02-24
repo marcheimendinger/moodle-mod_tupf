@@ -34,6 +34,9 @@ function insert_tupf_texts($tupfid, $textsdata) {
     }
 
     $DB->insert_records('tupf_texts', $texts);
+
+    // Triggers the texts translation background task.
+    \core\task\manager::queue_adhoc_task(new \mod_tupf\task\translate_texts, true);
 }
 
 /**
@@ -110,8 +113,6 @@ function tupf_delete_instance($id) {
     if (!$DB->delete_records('tupf', ['id' => $tupf->id])) {
         $result = false;
     }
-
-    $textsids = array_keys($textsids);
 
     return $result;
 }
