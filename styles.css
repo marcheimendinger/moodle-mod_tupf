@@ -2,7 +2,6 @@
  * Custom styling for the module.
  *
  * @package mod_tupf
- * @author Marc Heimendinger
  */
 
 a.tupf-word {
@@ -30,6 +29,7 @@ a.tupf-word.mark {
 .tupf-flashcard-back {
     width: 220px;
     height: 135px;
+    border-radius: 12px;
 }
 
 .tupf-flashcard-inner {
@@ -46,14 +46,15 @@ a.tupf-word.mark {
     position: absolute;
     top: 0;
     left: 0;
-    background: #ced4da;
 }
 
 .tupf-flashcard-front {
     z-index: 2;
     transform: rotateY(0deg);
+    background: #eaecee;
 }
 
 .tupf-flashcard-back {
     transform: rotateY(-180deg);
+    background: #e1e3ee;
 }

@@ -190,19 +190,15 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output .= html_writer::tag('p', get_string('wordsreview_help', 'tupf'));
 
-        $front = html_writer::tag('h4', $word->language1, ['class' => 'align-self-center mb-0']);
-        $front = html_writer::div($front, 'tupf-flashcard-front d-flex justify-content-center');
+        $centercontent = $this->flashcard($word);
 
-        $back = html_writer::tag('h4', $word->language2simplified, ['class' => 'align-self-center mb-0']);
-        $back = html_writer::div($back, 'tupf-flashcard-back d-flex justify-content-center');
-
-        $flashcard = html_writer::div($front.$back, 'tupf-flashcard-inner');
-        $flashcard = html_writer::div($flashcard, 'tupf-flashcard-container mx-auto mb-4');
-
-        $centercontent = $flashcard;
-
-        $urlprevious = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid, 'previous' => true]);
-        $previousdisabled = $wordindex == 1 ? ' disabled' : '';
+        if ($wordindex == 1) {
+            $urlprevious = '#';
+            $previousdisabled = ' disabled';
+        } else {
+            $urlprevious = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid, 'previous' => true]);
+            $previousdisabled = '';
+        }
         $centercontent .= html_writer::tag('a', get_string('previous'), ['href' => $urlprevious, 'class' => 'mx-2'.$previousdisabled]);
 
         $urlnext = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
@@ -213,6 +209,24 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $output .= html_writer::div($centercontent, 'text-center');
 
         return $output;
+    }
+
+    /**
+     * Builds word flashcard widget.
+     *
+     * @param $word Word object from the `tupf_words` table.
+     * @return string HTML content.
+     */
+    private function flashcard($word) {
+        $front = html_writer::tag('h4', $word->language1, ['class' => 'align-self-center mb-0']);
+        $front = html_writer::div($front, 'tupf-flashcard-front d-flex justify-content-center');
+
+        $back = html_writer::tag('h4', $word->language2simplified, ['class' => 'align-self-center mb-0']);
+        $back = html_writer::div($back, 'tupf-flashcard-back d-flex justify-content-center');
+
+        $flashcard = html_writer::div($front.$back, 'tupf-flashcard-inner');
+
+        return html_writer::div($flashcard, 'tupf-flashcard-container mx-auto mb-4');
     }
 
     /**
