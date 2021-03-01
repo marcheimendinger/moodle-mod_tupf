@@ -10,10 +10,15 @@
 import $ from 'jquery';
 
 export const init = () => {
-    let selectedWordsIds = [];
+    let selectedWordsIds = $('a.tupf-word.mark').map(function() {
+        return $(this).data('word-id');
+    }).get();
+
     let submitButton = $('input#tupf-submit-button');
 
-    submitButton.prop('disabled', true);
+    if (selectedWordsIds.length == 0) {
+        submitButton.prop('disabled', true);
+    }
 
     $('a.tupf-word').on('click', (event) => {
         const element = $(event.target);
@@ -29,8 +34,6 @@ export const init = () => {
         }
 
         submitButton.prop('disabled', selectedWordsIds.length == 0);
-
-        window.console.log(selectedWordsIds);
     });
 
     submitButton.on('click', () => {

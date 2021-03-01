@@ -27,8 +27,6 @@ if (empty($words)) {
     print_error('notavailable');
 }
 
-echo $output->words_list($words);
-
-echo $output->back_home_button($coursemoduleid);
+echo $output->words_list($words, $coursemoduleid);
 
 echo $output->footer();

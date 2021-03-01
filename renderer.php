@@ -29,18 +29,6 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds a centered button to go back to instance module home page.
-     *
-     * @param integer $coursemoduleid Course module ID.
-     * @return string HTML content.
-     */
-    public function back_home_button(int $coursemoduleid) {
-        $url = new moodle_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
-        $button = html_writer::tag('a', get_string('backhome', 'tupf'), ['href' => $url, 'class' => 'btn btn-secondary']);
-        return html_writer::div($button, 'text-center my-4');
-    }
-
-    /**
      * Builds the home buttons widget.
      *
      * @param integer $coursemoduleid Course module ID.
@@ -70,9 +58,10 @@ class mod_tupf_renderer extends plugin_renderer_base {
      *
      * @param string $text HTML text.
      * @param [string] $words List of translated words.
+     * @param [int] $selectedwordsids Optional list of initially selected words IDs.
      * @return string HTML content.
      */
-    public function words_selection(string $text, array $words) {
+    public function words_selection(string $text, array $words, array $selectedwordsids = []) {
         $this->page->requires->js_call_amd('mod_tupf/wordsselection', 'init');
 
         $output = '';
@@ -83,15 +72,16 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $textoutput = $text;
         $offset = 0;
         foreach ($words as $word) {
-            $linkStart = html_writer::start_tag('a', ['href' => '#', 'data-word-id' => $word->id, 'class' => 'tupf-word']);
-            $startPosition = $word->position + $offset;
-            $textoutput = substr_replace($textoutput, $linkStart, $startPosition, 0);
-            $offset += strlen($linkStart);
+            $selectedclass = in_array($word->id, $selectedwordsids) ? ' mark' : '';
+            $linkstart = html_writer::start_tag('a', ['href' => '#', 'data-word-id' => $word->id, 'class' => 'tupf-word'.$selectedclass]);
+            $startposition = $word->position + $offset;
+            $textoutput = substr_replace($textoutput, $linkstart, $startposition, 0);
+            $offset += strlen($linkstart);
 
-            $linkEnd = html_writer::end_tag('a');
-            $endPosition = $word->position + strlen($word->language2raw) + $offset;
-            $textoutput = substr_replace($textoutput, $linkEnd, $endPosition, 0);
-            $offset += strlen($linkEnd);
+            $linkend = html_writer::end_tag('a');
+            $endposition = $word->position + strlen($word->language2raw) + $offset;
+            $textoutput = substr_replace($textoutput, $linkend, $endposition, 0);
+            $offset += strlen($linkend);
         }
         $output .= $textoutput;
 
@@ -119,9 +109,10 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * Builds the words list widget.
      *
      * @param array $words Selected words for the current user.
+     * @param integer $coursemoduleid Course module ID.
      * @return string HTML content.
      */
-    public function words_list(array $words) {
+    public function words_list(array $words, int $coursemoduleid) {
         $output = '';
 
         $output .= $this->output->heading(get_string('selectedwords', 'tupf'), 2);
@@ -140,12 +131,22 @@ class mod_tupf_renderer extends plugin_renderer_base {
             $table->data[] = [
                 format_string($word->language1),
                 format_string($word->language2simplified),
-                $word->correctcount,
+                isset($word->correctcount) ? $word->correctcount : 0,
                 $word->showncount - $word->correctcount,
             ];
         }
 
         $output .= html_writer::table($table);
+
+        $buttons = '';
+
+        $homeurl = new moodle_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
+        $buttons .= html_writer::tag('a', get_string('backhome', 'tupf'), ['href' => $homeurl, 'class' => 'btn btn-secondary mx-2']);
+
+        $editselectionurl = new moodle_url('/mod/tupf/editselection.php', ['id' => $coursemoduleid]);
+        $buttons .= html_writer::tag('a', get_string('editselection', 'tupf'), ['href' => $editselectionurl, 'class' => 'btn btn-secondary mx-2']);
+
+        $output .= html_writer::div($buttons, 'text-center my-4');
 
         return $output;
     }

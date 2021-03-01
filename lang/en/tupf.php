@@ -13,6 +13,7 @@ $string['pluginname'] = 'TUPF';
 $string['modulenameplural'] = 'TUPFs';
 $string['modulename_help'] = 'Text Understanding with Personalized Flashcards';
 $string['cachedef_reviewingwords'] = 'Stores lists of words to review.';
+$string['errornojavascript'] = 'JavaScript is required in this module.';
 $string['backhome'] = 'Back home';
 
 // Module settings (in `mod_form.php`)
@@ -34,11 +35,8 @@ $string['addtextfield'] = 'Insert one more text field';
 
 // `view.php`
 $string['errorpendingtexts'] = 'This activity is not ready yet. Come back in a little while.';
-$string['errornojavascript'] = 'JavaScript is required for this module.';
 $string['startreview'] = 'Start reviewing words';
 $string['displaywordslist'] = 'Show all selected words';
-$string['wordsselection'] = 'Words Selection';
-$string['wordsselection_help'] = 'Click on words you don\'t know and you want to learn. You can click again to deselect a word. When you\'re happy with your selection, click on Submit. You won\'t be able to change your selection after submitting it.';
 
 // `review.php`
 $string['wordsreview'] = 'Words Review';
@@ -55,3 +53,8 @@ $string['language1'] = 'Language 1';
 $string['language2'] = 'Language 2';
 $string['correctcount'] = 'Correct Times';
 $string['wrongcount'] = 'Incorrect Times';
+$string['editselection'] = 'Edit words selection';
+
+// `editselection.php`
+$string['wordsselection'] = 'Words Selection';
+$string['wordsselection_help'] = 'Click on words you don\'t know and you want to learn. You can click again to deselect a word. When you\'re happy with your selection, click on Submit below the text.';
