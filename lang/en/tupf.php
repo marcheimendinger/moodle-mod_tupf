@@ -43,6 +43,9 @@ $string['wordsselection_help'] = 'Click on words you don\'t know and you want to
 // `review.php`
 $string['wordsreview'] = 'Words Review';
 $string['wordsreview_help'] = 'Click on the card to reveal its translation.';
+$string['previousword'] = 'Previous';
+$string['nextwordcorrect'] = 'Correct';
+$string['nextwordwrong'] = 'Wrong';
 $string['reviewend'] = 'Good job! You reviewed all your words.';
 $string['restartreview'] = 'Restart reviewing words';
 
@@ -50,5 +53,5 @@ $string['restartreview'] = 'Restart reviewing words';
 $string['selectedwords'] = 'Selected Words';
 $string['language1'] = 'Language 1';
 $string['language2'] = 'Language 2';
-$string['showncount'] = 'Shown Count';
-$string['timelastreviewed'] = 'Time Last Reviewed';
+$string['correctcount'] = 'Correct Times';
+$string['wrongcount'] = 'Incorrect Times';

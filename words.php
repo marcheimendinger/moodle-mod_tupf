@@ -12,14 +12,14 @@ require_once('locallib.php');
 
 $coursemoduleid = required_param('id', PARAM_INT);
 
-$tupf = authenticate_and_get_tupf('/mod/tupf/view.php', $coursemoduleid);
+$tupf = authenticate_and_get_tupf('/mod/tupf/words.php', $coursemoduleid);
 
 $output = $PAGE->get_renderer('mod_tupf');
 
 echo $output->header();
 
 $words = $DB->get_records_sql(
-    'SELECT language1, language2simplified, showncount, timelastreviewed FROM {tupf_selected_words} INNER JOIN {tupf_words} ON {tupf_selected_words}.wordid = {tupf_words}.id WHERE tupfid = ? AND userid = ?',
+    'SELECT language1, language2simplified, showncount, correctcount, timelastreviewed FROM {tupf_selected_words} INNER JOIN {tupf_words} ON {tupf_selected_words}.wordid = {tupf_words}.id WHERE tupfid = ? AND userid = ?',
     [$tupf->id, $USER->id]
 );
 

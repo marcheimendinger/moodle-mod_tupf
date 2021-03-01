@@ -29,21 +29,6 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds an error alert displayed if JavaScript is disabled.
-     *
-     * @return string HTML content.
-     */
-    private function no_javascript_error() {
-        $message = html_writer::tag(
-            'a',
-            get_string('errornojavascript', 'tupf'),
-            ['href' => 'https://www.enable-javascript.com', 'target' => '_blank']
-        );
-        $div = html_writer::div($message, 'alert alert-danger');
-        return html_writer::tag('noscript', $div);
-    }
-
-    /**
      * Builds a centered button to go back to instance module home page.
      *
      * @param integer $coursemoduleid Course module ID.
@@ -147,16 +132,16 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $table->head  = [
             get_string('language1', 'tupf'),
             get_string('language2', 'tupf'),
-            get_string('showncount', 'tupf'),
-            get_string('timelastreviewed', 'tupf'),
+            get_string('correctcount', 'tupf'),
+            get_string('wrongcount', 'tupf'),
         ];
 
         foreach ($words as $word) {
             $table->data[] = [
                 format_string($word->language1),
                 format_string($word->language2simplified),
-                $word->showncount,
-                userdate($word->timelastreviewed),
+                $word->correctcount,
+                $word->showncount - $word->correctcount,
             ];
         }
 
@@ -192,23 +177,53 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $centercontent = $this->flashcard($word);
 
-        if ($wordindex == 1) {
-            $urlprevious = '#';
-            $previousdisabled = ' disabled';
-        } else {
-            $urlprevious = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid, 'previous' => true]);
-            $previousdisabled = '';
-        }
-        $centercontent .= html_writer::tag('a', get_string('previous'), ['href' => $urlprevious, 'class' => 'mx-2'.$previousdisabled]);
+        $previousdisabled = $wordindex == 1;
+        $centercontent .= $this->button_post(get_string('previousword', 'tupf'), 'buttonaction', 'previous', 'btn btn-link mx-2', $previousdisabled);
 
-        $urlnext = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
-        $centercontent .= html_writer::tag('a', get_string('next'), ['href' => $urlnext, 'class' => 'mx-2']);
+        $centercontent .= $this->button_post(get_string('nextwordcorrect', 'tupf'), 'buttonaction', 'nextcorrect', 'btn btn-link mx-2');
+
+        $centercontent .= $this->button_post(get_string('nextwordwrong', 'tupf'), 'buttonaction', 'nextwrong', 'btn btn-link mx-2');
 
         $centercontent .= html_writer::tag('p', $wordindex.' / '.$totalwordscount, ['class' => 'small my-2']);
 
         $output .= html_writer::div($centercontent, 'text-center');
 
         return $output;
+    }
+
+    /**
+     * Builds words review end buttons widget.
+     *
+     * @param integer $coursemoduleid Course module ID.
+     * @return string HTML content.
+     */
+    public function words_review_end_buttons(int $coursemoduleid) {
+        $content = '';
+
+        $content .= html_writer::tag('p', get_string('reviewend', 'tupf'));
+
+        $viewurl = new moodle_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
+        $reviewurl = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
+
+        $content .= html_writer::tag('a', get_string('backhome', 'tupf'), ['href' => $viewurl, 'class' => 'btn btn-secondary mx-2']);
+        $content .= html_writer::tag('a', get_string('restartreview', 'tupf'), ['href' => $reviewurl, 'class' => 'btn btn-secondary mx-2']);
+
+        return html_writer::div($content, 'text-center');
+    }
+
+    /**
+     * Builds an error alert displayed if JavaScript is disabled.
+     *
+     * @return string HTML content.
+     */
+    private function no_javascript_error() {
+        $message = html_writer::tag(
+            'a',
+            get_string('errornojavascript', 'tupf'),
+            ['href' => 'https://www.enable-javascript.com', 'target' => '_blank']
+        );
+        $div = html_writer::div($message, 'alert alert-danger');
+        return html_writer::tag('noscript', $div);
     }
 
     /**
@@ -230,23 +245,34 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds words review end buttons widget.
+     * Builds POST button form.
      *
-     * @param integer $coursemoduleid Course module ID.
+     * @param string $content Button content. Usually a localized string.
+     * @param string $name Button name for POST data.
+     * @param string $value Button value for POST data.
+     * @param string $class CSS classes. Defaults to a simple link style.
+     * @param bool $disabled Disabled state. Defaults to enabled.
      * @return string HTML content.
      */
-    public function words_review_end_buttons(int $coursemoduleid) {
-        $content = '';
+    private function button_post(string $content, string $name, string $value, string $class = 'btn btn-link', bool $disabled = false) {
+        $options = [
+            'type' => 'submit',
+            'class' => $class,
+            'name' => $name,
+            'value' => $value,
+        ];
 
-        $content .= html_writer::tag('p', get_string('reviewend', 'tupf'));
+        if ($disabled) {
+            $options['disabled'] = true;
+        }
 
-        $viewurl = new moodle_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
-        $reviewurl = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
+        $button = html_writer::tag('button', $content, $options);
 
-        $content .= html_writer::tag('a', get_string('backhome', 'tupf'), ['href' => $viewurl, 'class' => 'btn btn-secondary mx-2']);
-        $content .= html_writer::tag('a', get_string('restartreview', 'tupf'), ['href' => $reviewurl, 'class' => 'btn btn-secondary mx-2']);
-
-        return html_writer::div($content, 'text-center');
+        return html_writer::tag('form', $button, [
+            'action' => $this->page->url,
+            'method' => 'post',
+            'class' => 'inline'
+        ]);
     }
 
 }
