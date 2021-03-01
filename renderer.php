@@ -175,18 +175,31 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output .= html_writer::tag('p', get_string('wordsreview_help', 'tupf'));
 
-        $centercontent = $this->flashcard($word);
+        $columns = '';
 
         $previousdisabled = $wordindex == 1;
-        $centercontent .= $this->button_post(get_string('previousword', 'tupf'), 'buttonaction', 'previous', 'btn btn-link mx-2', $previousdisabled);
+        $columns .= html_writer::div(
+            $this->button_post($this->icon('chevron-left'), 'buttonaction', 'previous', 'btn btn-link text-secondary', $previousdisabled),
+            'col-md-1 col-sm-2 order-last order-sm-first text-center'
+        );
 
-        $centercontent .= $this->button_post(get_string('nextwordcorrect', 'tupf'), 'buttonaction', 'nextcorrect', 'btn btn-link mx-2');
+        $columns .= html_writer::div($this->flashcard($word), 'col-sm-auto');
 
-        $centercontent .= $this->button_post(get_string('nextwordwrong', 'tupf'), 'buttonaction', 'nextwrong', 'btn btn-link mx-2');
+        $buttons = '';
+        $buttons .= $this->button_post(
+            $this->icon('check'),
+            'buttonaction',
+            'nextcorrect',
+            'btn btn-success btn-lg rounded-pill p-2 m-2'
+        );
+        $buttons .= $this->button_post(
+            $this->icon('x'), 'buttonaction', 'nextwrong', 'btn btn-danger btn-lg rounded-pill p-2 m-2'
+        );
+        $columns .= html_writer::div($buttons, 'col-md-1 col-sm-2 mt-3 mt-sm-0 text-center');
 
-        $centercontent .= html_writer::tag('p', $wordindex.' / '.$totalwordscount, ['class' => 'small my-2']);
+        $output .= html_writer::div($columns, 'row justify-content-sm-center align-items-center mt-0 mt-sm-4');
 
-        $output .= html_writer::div($centercontent, 'text-center');
+        $output .= html_writer::tag('p', $wordindex.' / '.$totalwordscount, ['class' => 'small text-center mt-4 mb-2']);
 
         return $output;
     }
@@ -209,6 +222,31 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $content .= html_writer::tag('a', get_string('restartreview', 'tupf'), ['href' => $reviewurl, 'class' => 'btn btn-secondary mx-2']);
 
         return html_writer::div($content, 'text-center');
+    }
+
+    /**
+     * Returns an SVG icon from icons.getbootstrap.com.
+     *
+     * @param string $name Icon name.
+     * @param int $size Icon size. Defaults to 32.
+     * @return string HTML content.
+     */
+    private function icon(string $name, int $size = 32) {
+        $svg = [
+            'check' => '<path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>',
+            'chevron-left' => '<path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>',
+            'x' => '<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>',
+        ];
+
+        if (!array_key_exists($name, $svg)) {
+            return '';
+        }
+
+        return html_writer::tag(
+            'svg',
+            $svg[$name],
+            ['xmlns' => 'http://www.w3.org/2000/svg', 'width' => $size, 'height' => $size, 'fill' => 'currentColor', 'viewBox' => '0 0 16 16']
+        );
     }
 
     /**
@@ -241,7 +279,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $flashcard = html_writer::div($front.$back, 'tupf-flashcard-inner');
 
-        return html_writer::div($flashcard, 'tupf-flashcard-container mx-auto mb-4');
+        return html_writer::div($flashcard, 'tupf-flashcard-container mx-auto');
     }
 
     /**
