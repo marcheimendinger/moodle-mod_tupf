@@ -40,15 +40,10 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output .= $this->output->heading($tupfname, 2);
 
-        $buttons = '';
-
-        $reviewurl = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
-        $buttons .= html_writer::tag('a', get_string('startreview', 'tupf'), ['href' => $reviewurl, 'class' => 'btn btn-secondary mx-2']);
-
-        $wordsurl = new moodle_url('/mod/tupf/words.php', ['id' => $coursemoduleid]);
-        $buttons .= html_writer::tag('a', get_string('displaywordslist', 'tupf'), ['href' => $wordsurl, 'class' => 'btn btn-secondary mx-2']);
-
-        $output .= html_writer::div($buttons, 'text-center my-4');
+        $output .= $this->buttons(
+            ['review.php' => get_string('startreview', 'tupf'), 'words.php' => get_string('displaywordslist', 'tupf')],
+            $coursemoduleid
+        );
 
         return $output;
     }
@@ -151,15 +146,10 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output .= html_writer::table($table);
 
-        $buttons = '';
-
-        $homeurl = new moodle_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
-        $buttons .= html_writer::tag('a', get_string('backhome', 'tupf'), ['href' => $homeurl, 'class' => 'btn btn-secondary mx-2']);
-
-        $editselectionurl = new moodle_url('/mod/tupf/editselection.php', ['id' => $coursemoduleid]);
-        $buttons .= html_writer::tag('a', get_string('editselection', 'tupf'), ['href' => $editselectionurl, 'class' => 'btn btn-secondary mx-2']);
-
-        $output .= html_writer::div($buttons, 'text-center my-4');
+        $output .= $this->buttons(
+            ['view.php' => get_string('backhome', 'tupf'), 'editselection.php' => get_string('editselection', 'tupf')],
+            $coursemoduleid
+        );
 
         return $output;
     }
@@ -225,17 +215,16 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * @return string HTML content.
      */
     public function words_review_end_buttons(int $coursemoduleid) {
-        $content = '';
+        $output = '';
 
-        $content .= html_writer::tag('p', get_string('reviewend', 'tupf'));
+        $output .= html_writer::tag('p', get_string('reviewend', 'tupf'), ['class' => 'text-center']);
 
-        $viewurl = new moodle_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
-        $reviewurl = new moodle_url('/mod/tupf/review.php', ['id' => $coursemoduleid]);
+        $output .= $this->buttons(
+            ['view.php' => get_string('backhome', 'tupf'), 'review.php' => get_string('restartreview', 'tupf')],
+            $coursemoduleid
+        );
 
-        $content .= html_writer::tag('a', get_string('backhome', 'tupf'), ['href' => $viewurl, 'class' => 'btn btn-secondary mx-2']);
-        $content .= html_writer::tag('a', get_string('restartreview', 'tupf'), ['href' => $reviewurl, 'class' => 'btn btn-secondary mx-2']);
-
-        return html_writer::div($content, 'text-center');
+        return $output;
     }
 
     /**
@@ -325,6 +314,25 @@ class mod_tupf_renderer extends plugin_renderer_base {
             'method' => 'post',
             'class' => 'inline'
         ]);
+    }
+
+    /**
+     * Builds buttons list on a row.
+     *
+     * @param array $buttonsdata Key as URL (relatively to the module directory `/mod/tupf/`) and value to button content.
+     * @param integer $coursemoduleid Course module ID.
+     * @param string $buttonclass Buttons class. Defaults to a secondary button styling.
+     * @return string HTML content.
+     */
+    private function buttons(array $buttonsdata, int $coursemoduleid, string $buttonclass = 'btn btn-secondary m-2') {
+        $buttons = '';
+
+        foreach ($buttonsdata as $file => $content) {
+            $url = new moodle_url('/mod/tupf/'.$file, ['id' => $coursemoduleid]);
+            $buttons .= html_writer::tag('a', $content, ['href' => $url, 'class' => $buttonclass]);
+        }
+
+        return html_writer::div($buttons, 'text-center my-3 my-sm-4');
     }
 
 }
