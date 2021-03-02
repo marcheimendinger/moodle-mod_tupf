@@ -183,7 +183,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $previousdisabled = $wordindex == 1;
         $columns .= html_writer::div(
-            $this->button_post($this->icon('chevron-left'), 'buttonaction', 'previous', 'btn btn-link text-secondary', $previousdisabled),
+            $this->button_post($this->icon('chevron-left'), 'buttonaction', 'previous', 'btn btn-light btn-lg rounded-pill p-2 m-2', $previousdisabled),
             'col-md-1 col-sm-2 order-last order-sm-first text-center'
         );
 
