@@ -33,15 +33,19 @@ class mod_tupf_renderer extends plugin_renderer_base {
      *
      * @param integer $coursemoduleid Course module ID.
      * @param string $tupfname Module instance name.
+     * @param bool $reviewingwords Whether the user is currently reviewing words.
      * @return string HTML content.
      */
-    public function home_buttons(int $coursemoduleid, string $tupfname) {
+    public function home_buttons(int $coursemoduleid, string $tupfname, bool $reviewingwords) {
         $output = '';
 
         $output .= $this->output->heading($tupfname, 2);
 
         $output .= $this->buttons(
-            ['review.php' => get_string('startreview', 'tupf'), 'words.php' => get_string('displaywordslist', 'tupf')],
+            [
+                'review.php' => $reviewingwords ? get_string('resumereview', 'tupf') : get_string('startreview', 'tupf'),
+                'words.php' => get_string('displaywordslist', 'tupf')
+            ],
             $coursemoduleid
         );
 

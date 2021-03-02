@@ -35,7 +35,10 @@ if (!empty($selectedwordsidsstring) &&
 }
 
 if ($DB->record_exists('tupf_selected_words', ['tupfid' => $tupf->id, 'userid' => $USER->id])) { // Words review
-    echo $output->home_buttons($coursemoduleid, $tupf->name);
+    $reviewingwordindexcache = cache::make('mod_tupf', 'reviewingwordindex');
+    $reviewingwords = $reviewingwordindexcache->get($tupf->id) !== false;
+
+    echo $output->home_buttons($coursemoduleid, $tupf->name, $reviewingwords);
 } else { // Words selection
     $textsids = $DB->get_fieldset_select('tupf_texts', 'id', 'tupfid = ? AND translated = TRUE', [$tupf->id]);
     shuffle($textsids);
