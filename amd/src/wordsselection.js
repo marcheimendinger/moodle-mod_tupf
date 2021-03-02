@@ -10,7 +10,7 @@
 import $ from 'jquery';
 
 export const init = () => {
-    let selectedWordsIds = $('a.tupf-word.mark').map(function() {
+    let selectedWordsIds = $('.tupf-word.mark').map(function() {
         return $(this).data('word-id');
     }).get();
 
@@ -20,7 +20,7 @@ export const init = () => {
         submitButton.prop('disabled', true);
     }
 
-    $('a.tupf-word').on('click', (event) => {
+    $('.tupf-word').on('click', (event) => {
         const element = $(event.target);
         const wordId = element.data('word-id');
 

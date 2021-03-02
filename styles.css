@@ -4,14 +4,32 @@
  * @package mod_tupf
  */
 
-a.tupf-word {
-    color: black;
+.tupf-word {
+    position: relative;
 }
 
-a.tupf-word.mark {
+.tupf-word:hover {
+    cursor: pointer;
+}
+
+.tupf-word.mark {
+    z-index: 0;
     padding: 0;
     color: white;
-    background-color: black;
+    background: none;
+}
+
+.tupf-word.mark::after {
+    z-index: -1;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% + .18em);
+    height: calc(100% + .18em);
+    content: '';
+    background: black;
+    border-radius: 3px;
 }
 
 .tupf-flashcard-container {

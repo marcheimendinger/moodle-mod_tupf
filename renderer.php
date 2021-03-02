@@ -72,12 +72,12 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $offset = 0;
         foreach ($words as $word) {
             $selectedclass = in_array($word->id, $selectedwordsids) ? ' mark' : '';
-            $linkstart = html_writer::start_tag('a', ['href' => '#', 'data-word-id' => $word->id, 'class' => 'tupf-word'.$selectedclass]);
+            $linkstart = html_writer::start_tag('span', ['data-word-id' => $word->id, 'class' => 'tupf-word'.$selectedclass]);
             $startposition = $word->position + $offset;
             $textoutput = substr_replace($textoutput, $linkstart, $startposition, 0);
             $offset += strlen($linkstart);
 
-            $linkend = html_writer::end_tag('a');
+            $linkend = html_writer::end_tag('span');
             $endposition = $word->position + strlen($word->language2raw) + $offset;
             $textoutput = substr_replace($textoutput, $linkend, $endposition, 0);
             $offset += strlen($linkend);
