@@ -72,10 +72,10 @@ class translate_texts extends \core\task\adhoc_task {
             foreach ($wordsresult as $wordresult) {
                 $word = [];
                 $word['textid'] = $text->id;
-                $word['position'] = $wordresult[3];
+                $word['position'] = $wordresult[4];
                 $word['language2raw'] = $wordresult[0];
                 $word['language2simplified'] = $wordresult[1];
-                $word['language1'] = $wordresult[4];
+                $word['language1'] = $wordresult[5];
                 $words[] = $word;
             }
 
@@ -112,9 +112,9 @@ class translate_texts extends \core\task\adhoc_task {
 
         require_once($CFG->libdir.'/filelib.php');
 
-        $url = 'https://miaparle.unige.ch/tupf/processtext';
+        $url = 'https://miaparle.unige.ch/tupf/processhtml';
 
-        $jsoninput = json_encode(['text' => $text->text, 'l1' => $text->language1, 'l2' => $text->language2]);
+        $jsoninput = json_encode(['text' => $text->text, 'source' => $text->language2, 'target' => $text->language1]);
 
         $options = ['CURLOPT_HTTPHEADER' => ['Content-Type: application/json', 'Content-Length: '.strlen($jsoninput)]];
 
