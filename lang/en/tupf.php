@@ -49,8 +49,6 @@ $string['restartreview'] = 'Restart reviewing words';
 
 // `words.php`
 $string['selectedwords'] = 'Selected Words';
-$string['language1'] = 'Language 1';
-$string['language2'] = 'Language 2';
 $string['correctpercentage'] = 'Correct Percentage';
 $string['editselection'] = 'Edit words selection';
 

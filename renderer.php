@@ -109,10 +109,13 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * Builds the words list widget.
      *
      * @param array $words Selected words for the current user.
+     * @param object $tupf Module instance from `tupf` table.
      * @param integer $coursemoduleid Course module ID.
      * @return string HTML content.
      */
-    public function words_list(array $words, int $coursemoduleid) {
+    public function words_list(array $words, object $tupf, int $coursemoduleid) {
+        require_once('resources/languages.php');
+
         $output = '';
 
         $output .= $this->output->heading(get_string('selectedwords', 'tupf'), 2);
@@ -121,8 +124,8 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $table->attributes['class'] = 'generaltable mod_index';
 
         $table->head  = [
-            get_string('language1', 'tupf'),
-            get_string('language2', 'tupf'),
+            $tupf_languages[$tupf->language1],
+            $tupf_languages[$tupf->language2],
             get_string('correctpercentage', 'tupf'),
         ];
 
