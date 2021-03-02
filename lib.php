@@ -22,8 +22,8 @@ function insert_tupf_texts($tupfid, $textsdata) {
 
     $texts = [];
     foreach ($textsdata as $value) {
-        $text = $value['text']; // Editor form field returns an array
-        // TODO Remove <a> links from $text
+        $text = $value['text']; // Editor form field returns an array.
+        $text = preg_replace('#<a.*?>(.*?)</a>#is', '\1', $text); // Removes links from text.
         if (isset($text) && $text <> '') {
             $texts[] = [
                 'tupfid' => $tupfid,
