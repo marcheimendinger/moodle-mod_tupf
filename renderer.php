@@ -123,16 +123,26 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $table->head  = [
             get_string('language1', 'tupf'),
             get_string('language2', 'tupf'),
-            get_string('correctcount', 'tupf'),
-            get_string('wrongcount', 'tupf'),
+            get_string('correctpercentage', 'tupf'),
         ];
 
         foreach ($words as $word) {
+            $progress = '';
+            if ($word->showncount > 0) {
+                $correctpercentage = round(($word->correctcount * 100) / $word->showncount);
+
+                $progresscontent = html_writer::div(
+                    $correctpercentage > 10 ? $correctpercentage.'%' : '',
+                    'progress-bar',
+                    ['role' => 'progressbar', 'style' => 'width: '.$correctpercentage.'%;', 'aria-valuenow' => $correctpercentage, 'aria-valuemin' => 0, 'aria-valuemax' => 100]
+                );
+                $progress = html_writer::div($progresscontent, 'progress');
+            }
+
             $table->data[] = [
                 format_string($word->language1),
                 format_string($word->language2simplified),
-                isset($word->correctcount) ? $word->correctcount : 0,
-                $word->showncount - $word->correctcount,
+                $progress,
             ];
         }
 
