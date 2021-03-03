@@ -96,7 +96,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $output .= html_writer::tag('input', null, [
             'type' => 'button',
             'id' => 'tupf-submit-button',
-            'class' => 'btn btn-primary',
+            'class' => 'btn btn-primary my-2',
             'value' => get_string('submit'),
         ]);
         $output .= html_writer::end_tag('form');
@@ -135,10 +135,10 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
                 $progresscontent = html_writer::div(
                     $correctpercentage > 10 ? $correctpercentage.'%' : '',
-                    'progress-bar',
+                    'progress-bar rounded-pill',
                     ['role' => 'progressbar', 'style' => 'width: '.$correctpercentage.'%;', 'aria-valuenow' => $correctpercentage, 'aria-valuemin' => 0, 'aria-valuemax' => 100]
                 );
-                $progress = html_writer::div($progresscontent, 'progress');
+                $progress = html_writer::div($progresscontent, 'progress rounded-pill');
             }
 
             $table->data[] = [
