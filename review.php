@@ -44,13 +44,15 @@ if ($reviewingwordindex === false) { // Start review.
     $wordsids = array_keys($DB->get_records_menu(
         'tupf_selected_words',
         ['tupfid' => $tupf->id, 'userid' => $USER->id],
-        'timelastreviewed ASC', // Oldest or never reviewed words first.
+        null,
         'wordid'
     ));
 
     if (empty($wordsids)) {
         print_error('notavailable');
     }
+
+    shuffle($wordsids);
 
     $reviewingwordsidscache->set($tupf->id, $wordsids);
 
