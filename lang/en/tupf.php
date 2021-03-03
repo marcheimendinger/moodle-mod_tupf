@@ -11,10 +11,17 @@
 $string['modulename'] = 'TUPF';
 $string['pluginname'] = 'TUPF';
 $string['modulenameplural'] = 'TUPFs';
-$string['modulename_help'] = 'Text Understanding with Personalized Flashcards';
+$string['modulename_help'] = 'The TUPF (Text Understanding with Personalized Flashcards) activity module enables students to easily learn new words using virtual flashcards.
+
+* The teacher initially submits one or more texts in the taught language (L2).
+* These texts are automatically translated by the module (this can take several minutes).
+* Students are asked on their first visit to select unknown words in one of the randomly selected texts.
+* Students can review their selected words using virtual flashcards and indicate whether they knew the word.
+* Students can list all their selected words with a percentage of the number of correct times for each word.
+* Students can edit their words selection at any time.';
 $string['cachedef_reviewingwords'] = 'Stores lists of words to review.';
 $string['errornojavascript'] = 'JavaScript is required in this module.';
-$string['backhome'] = 'Back home';
+$string['backhome'] = 'Go back home';
 
 // Module settings (in `mod_form.php`)
 $string['texts'] = 'Texts';
