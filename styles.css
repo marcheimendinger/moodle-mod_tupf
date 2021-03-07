@@ -8,14 +8,13 @@
     position: relative;
 }
 
-.tupf-word:hover {
+.tupf-word.selectable:hover {
     cursor: pointer;
 }
 
 .tupf-word.mark {
     z-index: 0;
     padding: 0;
-    color: white;
     background: none;
 }
 
@@ -28,8 +27,33 @@
     width: calc(100% + .18em);
     height: calc(100% + .18em);
     content: '';
-    background: black;
     border-radius: 3px;
+}
+
+.tupf-word.mark.selectable,
+.tupf-word.mark.high {
+    color: white;
+}
+
+.tupf-word.mark.low,
+.tupf-word.mark.medium {
+    color: black;
+}
+
+.tupf-word.mark.selectable::after {
+    background: black;
+}
+
+.tupf-word.mark.low::after {
+    background: #ffe600;
+}
+
+.tupf-word.mark.medium::after {
+    background: #ff9a16;
+}
+
+.tupf-word.mark.high::after {
+    background: #f00000;
 }
 
 .tupf-flashcard-container {

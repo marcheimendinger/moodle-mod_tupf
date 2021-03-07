@@ -72,7 +72,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $offset = 0;
         foreach ($words as $word) {
             $selectedclass = in_array($word->id, $selectedwordsids) ? ' mark' : '';
-            $linkstart = html_writer::start_tag('span', ['data-word-id' => $word->id, 'class' => 'tupf-word'.$selectedclass]);
+            $linkstart = html_writer::start_tag('span', ['data-word-id' => $word->id, 'class' => 'tupf-word selectable'.$selectedclass]);
             $startposition = $word->position + $offset;
             $textoutput = substr_replace($textoutput, $linkstart, $startposition, 0);
             $offset += strlen($linkstart);
@@ -151,7 +151,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $output .= html_writer::table($table);
 
         $output .= $this->buttons(
-            ['view.php' => get_string('backhome', 'tupf'), 'editselection.php' => get_string('editselection', 'tupf')],
+            ['editselection.php' => get_string('editselection', 'tupf')],
             $coursemoduleid
         );
 
@@ -229,6 +229,84 @@ class mod_tupf_renderer extends plugin_renderer_base {
         );
 
         return $output;
+    }
+
+    /**
+     * Builds link to report widget.
+     *
+     * @param integer $coursemoduleid Course module ID.
+     * @return string HTML content.
+     */
+    public function report_link(int $coursemoduleid) {
+        $url = new moodle_url('/mod/tupf/report.php', ['id' => $coursemoduleid]);
+        $link = html_writer::tag('a', get_string('showreport', 'tupf'), ['href' => $url]);
+        return html_writer::div($link, 'float-none float-sm-right mb-2 mb-sm-0');
+    }
+
+    /**
+     * Builds report page heading, including the legend.
+     *
+     * @return string HTML content.
+     */
+    public function report_heading() {
+        $output = '';
+
+        $output .= $this->output->heading(get_string('report', 'tupf'), 2);
+
+        $output .= html_writer::start_tag('p');
+        $output .= get_string('report_help', 'tupf').' ';
+        $output .= html_writer::tag('span', get_string('reportlow', 'tupf').' (1-35%)', ['class' => 'tupf-word mark low mx-1']);
+        $output .= html_writer::tag('span', get_string('reportmedium', 'tupf').' (35-70%)', ['class' => 'tupf-word mark medium mx-1']);
+        $output .= html_writer::tag('span', get_string('reporthigh', 'tupf').' (70-100%)', ['class' => 'tupf-word mark high mx-1']);
+        $output .= html_writer::end_tag('p');
+
+        return $output;
+    }
+
+    /**
+     * Builds text report widget.
+     *
+     * @param string $text Text in HTML.
+     * @param integer $textindex Text number (starts at 1).
+     * @param integer $userscount Total number of users using this text.
+     * @param array $words Text words objects containing `language2raw`, `position`, and `userscount` (number of users having selected this word).
+     * @return string HTML content.
+     */
+    public function report_text(string $text, int $textindex, int $userscount, array $words) {
+        $textoutput = $text;
+        $offset = 0;
+        foreach ($words as $word) {
+            $percentage = ($word->userscount * 100) / $userscount;
+
+            if ($percentage < 35) {
+                $usageclass = 'low';
+            } else if ($percentage > 70) {
+                $usageclass = 'high';
+            } else {
+                $usageclass = 'medium';
+            }
+
+            $spanstart = html_writer::start_tag('span', ['class' => 'tupf-word mark '.$usageclass]);
+            $startposition = $word->position + $offset;
+            $textoutput = substr_replace($textoutput, $spanstart, $startposition, 0);
+            $offset += strlen($spanstart);
+
+            $spanend = html_writer::end_tag('span');
+            $endposition = $word->position + strlen($word->language2raw) + $offset;
+            $textoutput = substr_replace($textoutput, $spanend, $endposition, 0);
+            $offset += strlen($spanend);
+        }
+
+        $header = html_writer::tag('h2', get_string('reporttextnumber', 'tupf', $textindex), ['class' => 'card-header']);
+
+        $footer = html_writer::div(get_string('reporttextusage', 'tupf', $userscount), 'card-footer text-muted');
+
+        $content = '';
+        $content .= $header;
+        $content .= html_writer::div($textoutput, 'card-body');
+        $content .= $footer;
+
+        return html_writer::div($content, 'card my-4');
     }
 
     /**

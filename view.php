@@ -34,6 +34,10 @@ if (!empty($selectedwordsidsstring) &&
     $DB->insert_records('tupf_selected_words', $selectedwordsoject);
 }
 
+if (has_capability('mod/tupf:readreport', $PAGE->cm->context)) {
+    echo $output->report_link($coursemoduleid);
+}
+
 if ($DB->record_exists('tupf_selected_words', ['tupfid' => $tupf->id, 'userid' => $USER->id])) { // Words review
     $reviewingwordindexcache = cache::make('mod_tupf', 'reviewingwordindex');
     $reviewingwords = $reviewingwordindexcache->get($tupf->id) !== false;

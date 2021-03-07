@@ -63,3 +63,13 @@ $string['editselection'] = 'Edit words selection';
 // `editselection.php`
 $string['wordsselection'] = 'Words Selection';
 $string['wordsselection_help'] = 'Click on words you don\'t know and you want to learn. You can click again to deselect a word. When you\'re happy with your selection, click on Submit below the text.';
+
+// `report.php`
+$string['showreport'] = 'Usage';
+$string['report'] = 'Words Usage';
+$string['report_help'] = 'Here you can see which words are the most selected by your students. Legend:';
+$string['reportlow'] = 'Not much';
+$string['reportmedium'] = 'Some';
+$string['reporthigh'] = 'A lot';
+$string['reporttextnumber'] = 'Text {$a}';
+$string['reporttextusage'] = 'This text is used by {$a} student(s).';

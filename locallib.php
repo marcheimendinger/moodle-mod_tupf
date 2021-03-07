@@ -14,9 +14,10 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @param string $url Current page URL.
  * @param int $coursemoduleid Course module ID.
- * @return object
+ * @param string $capability Required capability to access the current page. Defaults to 'mod/tupf:review'.
+ * @return object TUPF instance from `tupf` table.
  */
-function authenticate_and_get_tupf(string $url, int $coursemoduleid) {
+function authenticate_and_get_tupf(string $url, int $coursemoduleid, string $capability = 'mod/tupf:review') {
     global $DB, $PAGE;
 
     if (!$cm = get_coursemodule_from_id('tupf', $coursemoduleid)) {
@@ -31,7 +32,7 @@ function authenticate_and_get_tupf(string $url, int $coursemoduleid) {
 
     require_course_login($course, true, $cm);
     $context = context_module::instance($cm->id);
-    require_capability('mod/tupf:review', $context);
+    require_capability($capability, $context);
 
     $PAGE->set_url($url, ['id' => $coursemoduleid]);
     $PAGE->set_title($course->shortname.': '.$tupf->name);
