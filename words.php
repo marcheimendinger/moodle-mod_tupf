@@ -14,6 +14,8 @@ $coursemoduleid = required_param('id', PARAM_INT);
 
 $tupf = authenticate_and_get_tupf('/mod/tupf/words.php', $coursemoduleid);
 
+$PAGE->navbar->add(get_string('selectedwords', 'tupf'), $PAGE->url);
+
 $output = $PAGE->get_renderer('mod_tupf');
 
 echo $output->header();

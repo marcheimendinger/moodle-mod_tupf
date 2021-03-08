@@ -15,6 +15,9 @@ $selectedwordsidsstring = optional_param('selected-words', '', PARAM_TEXT);
 
 $tupf = authenticate_and_get_tupf('/mod/tupf/editselection.php', $coursemoduleid);
 
+$PAGE->navbar->add(get_string('selectedwords', 'tupf'), new moodle_url('/mod/tupf/words.php', ['id' => $coursemoduleid]));
+$PAGE->navbar->add(get_string('editselection', 'tupf'), $PAGE->url);
+
 $selectedwordsidsdatabase = $DB->get_fieldset_select('tupf_selected_words', 'wordid', 'tupfid = ? AND userid = ?', [$tupf->id, $USER->id]);
 
 if (empty($selectedwordsidsdatabase)) {

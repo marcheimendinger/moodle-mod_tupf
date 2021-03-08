@@ -58,11 +58,11 @@ $string['restartreview'] = 'Restart reviewing words';
 // `words.php`
 $string['selectedwords'] = 'Selected Words';
 $string['correctpercentage'] = 'Correct Percentage';
-$string['editselection'] = 'Edit words selection';
+$string['editselectionbutton'] = 'Edit words selection';
 
 // `editselection.php`
-$string['wordsselection'] = 'Words Selection';
-$string['wordsselection_help'] = 'Click on words you don\'t know and you want to learn. You can click again to deselect a word. When you\'re happy with your selection, click on Submit below the text.';
+$string['editselection'] = 'Edit Selected Words';
+$string['editselection_help'] = 'Click on words you don\'t know and you want to learn. You can click again to deselect a word. When you\'re happy with your selection, click on Submit below the text.';
 
 // `report.php`
 $string['showreport'] = 'Usage';

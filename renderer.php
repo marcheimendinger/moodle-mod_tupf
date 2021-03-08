@@ -65,8 +65,8 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output = '';
 
-        $output .= $this->output->heading(get_string('wordsselection', 'tupf'), 2);
-        $output .= html_writer::tag('p', get_string('wordsselection_help', 'tupf'));
+        $output .= $this->output->heading(get_string('editselection', 'tupf'), 2);
+        $output .= html_writer::tag('p', get_string('editselection_help', 'tupf'));
 
         $textoutput = $text;
         $offset = 0;
@@ -151,7 +151,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $output .= html_writer::table($table);
 
         $output .= $this->buttons(
-            ['editselection.php' => get_string('editselection', 'tupf')],
+            ['editselection.php' => get_string('editselectionbutton', 'tupf')],
             $coursemoduleid
         );
 
