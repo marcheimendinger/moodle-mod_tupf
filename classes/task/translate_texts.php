@@ -37,10 +37,10 @@ class translate_texts extends \core\task\adhoc_task {
     protected function translate(): bool {
         global $DB;
 
-        $limitmax = 5;
+        $limitmax = 2;
         $count = 0;
 
-        // Gets 5 oldest untranslated texts.
+        // Gets oldest untranslated texts.
         $sql = 'SELECT {tupf_texts}.id, {tupf_texts}.text, {tupf_texts}.translated, {tupf}.language1, {tupf}.language2
             FROM {tupf_texts}
             INNER JOIN {tupf}
