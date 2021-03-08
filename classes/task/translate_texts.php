@@ -42,11 +42,11 @@ class translate_texts extends \core\task\adhoc_task {
 
         // Gets 5 oldest untranslated texts.
         $sql = 'SELECT {tupf_texts}.id, {tupf_texts}.text, {tupf_texts}.translated, {tupf}.language1, {tupf}.language2
-        FROM {tupf_texts}
-        INNER JOIN {tupf}
-        ON {tupf_texts}.tupfid = {tupf}.id
-        WHERE {tupf_texts}.translated = false
-        ORDER BY {tupf_texts}.timemodified';
+            FROM {tupf_texts}
+            INNER JOIN {tupf}
+            ON {tupf_texts}.tupfid = {tupf}.id
+            WHERE {tupf_texts}.translated = false
+            ORDER BY {tupf_texts}.timemodified';
         $textset = $DB->get_recordset_sql($sql, null, 0, $limitmax);
 
         if (!$textset->valid()) {
