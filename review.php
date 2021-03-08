@@ -63,6 +63,10 @@ if ($reviewingwordindex === false) { // Start review.
 
     echo get_word_flashcard($wordsids, $wordindex);
 } else { // During a review.
+    if (!empty($buttonaction)) {
+        require_sesskey();
+    }
+
     $reviewingwordsids = $reviewingwordsidscache->get($tupf->id);
 
     if ($buttonaction == 'previous') {

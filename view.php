@@ -26,6 +26,8 @@ echo $output->header();
 // Inserts words selection in database if submitted.
 if (!empty($selectedwordsidsstring) &&
         !$DB->record_exists('tupf_selected_words', ['tupfid' => $tupf->id, 'userid' => $USER->id])) {
+    require_sesskey();
+
     $selectedwordsids = explode(',', $selectedwordsidsstring);
     $selectedwordsoject = [];
     foreach ($selectedwordsids as $wordid) {

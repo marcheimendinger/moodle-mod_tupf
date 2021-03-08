@@ -27,6 +27,8 @@ if (empty($selectedwordsidsdatabase)) {
 // Updates words selection in database if submitted.
 // Diff to add/delete words to reflect changes in selection.
 if (!empty($selectedwordsidsstring)) {
+    require_sesskey();
+
     $selectedwordsids = explode(',', $selectedwordsidsstring);
 
     $wordstoinsert = [];

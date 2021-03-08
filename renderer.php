@@ -91,6 +91,11 @@ class mod_tupf_renderer extends plugin_renderer_base {
         ]);
         $output .= html_writer::tag('input', '', [
             'type' => 'hidden',
+            'name' => 'sesskey',
+            'value' => sesskey(),
+        ]);
+        $output .= html_writer::tag('input', '', [
+            'type' => 'hidden',
             'name' => 'selected-words',
         ]);
         $output .= html_writer::tag('input', null, [
@@ -389,12 +394,20 @@ class mod_tupf_renderer extends plugin_renderer_base {
             $options['disabled'] = true;
         }
 
-        $button = html_writer::tag('button', $content, $options);
+        $formcontent = '';
 
-        return html_writer::tag('form', $button, [
+        $formcontent .= html_writer::tag('input', '', [
+            'type' => 'hidden',
+            'name' => 'sesskey',
+            'value' => sesskey(),
+        ]);
+
+        $formcontent .= html_writer::tag('button', $content, $options);
+
+        return html_writer::tag('form', $formcontent, [
             'action' => $this->page->url,
             'method' => 'post',
-            'class' => 'inline'
+            'class' => 'inline',
         ]);
     }
 
