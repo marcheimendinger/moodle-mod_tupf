@@ -61,6 +61,8 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * @return string HTML content.
      */
     public function words_selection(string $text, array $words, array $selectedwordsids = []) {
+        require_once('locallib.php');
+
         $this->page->requires->js_call_amd('mod_tupf/wordsselection', 'init');
 
         $output = '';
@@ -68,19 +70,19 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $output .= $this->output->heading(get_string('editselection', 'tupf'), 2);
         $output .= html_writer::tag('p', get_string('editselection_help', 'tupf'));
 
-        $textoutput = $text;
+        $textoutput = html_entity_decode($text);
         $offset = 0;
         foreach ($words as $word) {
             $selectedclass = in_array($word->id, $selectedwordsids) ? ' mark' : '';
             $linkstart = html_writer::start_tag('span', ['data-word-id' => $word->id, 'class' => 'tupf-word selectable'.$selectedclass]);
             $startposition = $word->position + $offset;
-            $textoutput = substr_replace($textoutput, $linkstart, $startposition, 0);
-            $offset += strlen($linkstart);
+            $textoutput = mb_substr_replace($textoutput, $linkstart, $startposition, 0);
+            $offset += mb_strlen($linkstart);
 
             $linkend = html_writer::end_tag('span');
-            $endposition = $word->position + strlen($word->language2raw) + $offset;
-            $textoutput = substr_replace($textoutput, $linkend, $endposition, 0);
-            $offset += strlen($linkend);
+            $endposition = $word->position + mb_strlen($word->language2raw) + $offset;
+            $textoutput = mb_substr_replace($textoutput, $linkend, $endposition, 0);
+            $offset += mb_strlen($linkend);
         }
         $output .= $textoutput;
 
@@ -278,7 +280,9 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * @return string HTML content.
      */
     public function report_text(string $text, int $textindex, int $userscount, array $words) {
-        $textoutput = $text;
+        require_once('locallib.php');
+
+        $textoutput = html_entity_decode($text);
         $offset = 0;
         foreach ($words as $word) {
             $percentage = ($word->userscount * 100) / $userscount;
@@ -293,13 +297,13 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
             $spanstart = html_writer::start_tag('span', ['class' => 'tupf-word mark '.$usageclass]);
             $startposition = $word->position + $offset;
-            $textoutput = substr_replace($textoutput, $spanstart, $startposition, 0);
-            $offset += strlen($spanstart);
+            $textoutput = mb_substr_replace($textoutput, $spanstart, $startposition, 0);
+            $offset += mb_strlen($spanstart);
 
             $spanend = html_writer::end_tag('span');
-            $endposition = $word->position + strlen($word->language2raw) + $offset;
-            $textoutput = substr_replace($textoutput, $spanend, $endposition, 0);
-            $offset += strlen($spanend);
+            $endposition = $word->position + mb_strlen($word->language2raw) + $offset;
+            $textoutput = mb_substr_replace($textoutput, $spanend, $endposition, 0);
+            $offset += mb_strlen($spanend);
         }
 
         $header = html_writer::tag('h2', get_string('reporttextnumber', 'tupf', $textindex), ['class' => 'card-header']);

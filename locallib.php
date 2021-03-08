@@ -46,3 +46,22 @@ function authenticate_and_get_tupf(string $url, int $coursemoduleid, string $cap
 
     return $tupf;
 }
+
+/**
+ * Replacement to built-in `substr_replace` with multi-byte handling.
+ * From: https://stackoverflow.com/questions/11239597/substr-replace-encoding-in-php/35638691
+ *
+ * @param string $original The input string.
+ * @param string $replacement The replacement string.
+ * @param int $position Position offset.
+ * @param int|null $length Optional length of the replacement.
+ * @return string The replaced text.
+ */
+function mb_substr_replace($original, $replacement, $position, $length = 0) {
+    $startString = mb_substr($original, 0, $position, 'UTF-8');
+    $endString = mb_substr($original, $position + $length, mb_strlen($original), 'UTF-8');
+
+    $out = $startString . $replacement . $endString;
+
+    return $out;
+}
