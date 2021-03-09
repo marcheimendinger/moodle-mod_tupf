@@ -67,7 +67,8 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output = '';
 
-        $output .= $this->output->heading(get_string('editselection', 'tupf'), 2);
+        $editing = !empty($selectedwordsids);
+        $output .= $this->output->heading($editing ? get_string('editselection', 'tupf') : get_string('startselection', 'tupf'), 2);
         $output .= html_writer::tag('p', get_string('editselection_help', 'tupf'));
 
         $textoutput = html_entity_decode($text);

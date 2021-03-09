@@ -43,6 +43,7 @@ $string['addtextfield'] = 'Insert one more text field';
 
 // `view.php`
 $string['errorpendingtexts'] = 'This activity is not ready yet. Come back in a little while.';
+$string['startselection'] = 'Select Words';
 $string['startreview'] = 'Start reviewing words';
 $string['resumereview'] = 'Continue reviewing words';
 $string['displaywordslist'] = 'Show all selected words';
