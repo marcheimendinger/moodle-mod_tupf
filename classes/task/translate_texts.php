@@ -21,9 +21,7 @@ class translate_texts extends \core\task\adhoc_task {
         mtrace('Task `translate_texts` starting...');
 
         if ($this->translate()) {
-            mtrace('Scheduled a new `translate_texts` task.');
-
-            \core\task\manager::queue_adhoc_task(new translate_texts);
+            $this->schedule_new_tupf_task();
         }
 
         mtrace('Task `translate_texts` finished.');
@@ -41,11 +39,11 @@ class translate_texts extends \core\task\adhoc_task {
         $count = 0;
 
         // Gets oldest untranslated texts.
-        $sql = 'SELECT {tupf_texts}.id, {tupf_texts}.text, {tupf_texts}.translated, {tupf}.language1, {tupf}.language2
+        $sql = 'SELECT {tupf_texts}.id, {tupf_texts}.text, {tupf_texts}.translated, {tupf_texts}.translationattempts, {tupf}.language1, {tupf}.language2
             FROM {tupf_texts}
             INNER JOIN {tupf}
             ON {tupf_texts}.tupfid = {tupf}.id
-            WHERE {tupf_texts}.translated = false
+            WHERE {tupf_texts}.translated = false AND {tupf_texts}.translationattempts < 3
             ORDER BY {tupf_texts}.timemodified';
         $textset = $DB->get_recordset_sql($sql, null, 0, $limitmax);
 
@@ -60,10 +58,21 @@ class translate_texts extends \core\task\adhoc_task {
         foreach ($textset as $text) {
             mtrace('Text #'.$text->id.' processing...');
 
+            $textnew = $text;
+            $textnew->translationattempts += 1;
+
             $wordsresult = $this->fetch_translation($text);
 
             if (empty($wordsresult)) {
-                mtrace('Text #'.$text->id.' could not be processed.');
+                $DB->update_record('tupf_texts', $textnew);
+
+                if ($textnew->translationattempts > 2) {
+                    mtrace('Text #'.$text->id.' could not be processed (tried '.$textnew->translationattempts.' times).');
+                } else {
+                    mtrace('Text #'.$text->id.' could not be processed. Scheduling a new task...');
+
+                    $this->schedule_new_tupf_task(1);
+                }
 
                 continue;
             }
@@ -81,7 +90,6 @@ class translate_texts extends \core\task\adhoc_task {
 
             $DB->insert_records('tupf_words', $words);
 
-            $textnew = $text;
             $textnew->translated = true;
             $DB->update_record('tupf_texts', $textnew);
 
@@ -123,6 +131,25 @@ class translate_texts extends \core\task\adhoc_task {
         $jsonoutput = $curl->post($url, $jsoninput, $options);
 
         return json_decode($jsonoutput, true);
+    }
+
+    /**
+     * Schedules a new `translate_texts` task if is not already scheduled.
+     *
+     * @param int $minutes Offset in minutes before starting the new task. Defaults to 0.
+     */
+    protected function schedule_new_tupf_task(int $minutes = 0) {
+        $taskscount = count(\core\task\manager::get_adhoc_tasks('mod_tupf\task\translate_texts'));
+
+        if ($taskscount < 2) {
+            $task = new translate_texts;
+            if ($minutes > 0) {
+                $task->set_next_run_time(time() + $minutes * MINSECS);
+            }
+            \core\task\manager::queue_adhoc_task($task);
+
+            mtrace('Scheduled a new `translate_texts` task.');
+        }
     }
 
 }
