@@ -29,7 +29,65 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds the home buttons widget.
+     * Error alert.
+     *
+     * @param string $content Alert content.
+     * @param string $class Alert Bootstrap CSS class. Defaults to danger style.
+     * @return string HTML content.
+     */
+    public function error(string $content, string $class = 'alert-danger') {
+        return html_writer::div($content, 'alert '.$class);
+    }
+
+    /**
+     * Homepage top links to access admin features.
+     * Displayed only to allowed users.
+     *
+     * @return string HTML content.
+     */
+    public function home_admin_top_links() {
+        global $PAGE;
+
+        $content = '';
+
+        if (has_capability('mod/tupf:readreport', $PAGE->cm->context)) {
+            $content .= $this->admin_button(
+                get_string('showreport', 'tupf'),
+                new moodle_url('/mod/tupf/report.php', ['id' => $PAGE->cm->id]),
+                'chart'
+            );
+        }
+
+        if (has_capability('mod/tupf:addinstance', $PAGE->cm->context)) {
+            $content .= $this->admin_button(
+                get_string('edittextsbutton', 'tupf'),
+                new moodle_url('/mod/tupf/edittexts.php', ['id' => $PAGE->cm->id]),
+                'pencil'
+            );
+        }
+
+        return empty($content) ? '' : html_writer::div($content, 'btn-group float-none float-sm-right mb-2 mb-sm-0');
+    }
+
+    /**
+     * Homepage admin texts editing button.
+     * Used while texts are being processed.
+     *
+     * @return string HTML content.
+     */
+    public function home_edit_texts_button() {
+        global $PAGE;
+
+        $icon = $this->icon('pencil', 14, 'mr-2 mb-1');
+
+        return $this->buttons(
+            ['edittexts.php' => $icon.get_string('edittextsbutton', 'tupf')],
+            $PAGE->cm->id
+        );
+    }
+
+    /**
+     * Homepage buttons for standard user.
      *
      * @param integer $coursemoduleid Course module ID.
      * @param string $tupfname Module instance name.
@@ -53,7 +111,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds the words selection widget.
+     * Words selector.
      *
      * @param string $text HTML text.
      * @param [string] $words List of translated words.
@@ -113,7 +171,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds the words list widget.
+     * Words table list.
      *
      * @param array $words Selected words for the current user.
      * @param object $tupf Module instance from `tupf` table.
@@ -160,14 +218,15 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output .= $this->buttons(
             ['editselection.php' => get_string('editselectionbutton', 'tupf')],
-            $coursemoduleid
+            $coursemoduleid,
+            'btn btn-secondary m-2'
         );
 
         return $output;
     }
 
     /**
-     * Builds the words review heading widget.
+     * Words review heading.
      *
      * @return string HTML content.
      */
@@ -176,7 +235,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds words review flashcard widget.
+     * Word flashcard for words review.
      *
      * @param integer $coursemoduleid Course module ID.
      * @param $word Word object from the `tupf_words` table.
@@ -221,7 +280,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds words review end buttons widget.
+     * Words review ending buttons.
      *
      * @param integer $coursemoduleid Course module ID.
      * @return string HTML content.
@@ -240,24 +299,23 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds link to report widget.
-     *
-     * @param integer $coursemoduleid Course module ID.
-     * @return string HTML content.
-     */
-    public function report_link(int $coursemoduleid) {
-        $url = new moodle_url('/mod/tupf/report.php', ['id' => $coursemoduleid]);
-        $link = html_writer::tag('a', get_string('showreport', 'tupf'), ['href' => $url]);
-        return html_writer::div($link, 'float-none float-sm-right mb-2 mb-sm-0');
-    }
-
-    /**
-     * Builds report page heading, including the legend.
+     * Report heading, including the legend.
      *
      * @return string HTML content.
      */
     public function report_heading() {
+        global $PAGE;
+
         $output = '';
+
+        if (has_capability('mod/tupf:addinstance', $PAGE->cm->context)) {
+            $output .= $this->admin_button(
+                get_string('edittextsbutton', 'tupf'),
+                new moodle_url('/mod/tupf/edittexts.php', ['id' => $PAGE->cm->id]),
+                'pencil',
+                'mb-2 mb-sm-0 float-sm-right'
+            );
+        }
 
         $output .= $this->output->heading(get_string('report', 'tupf'), 2);
 
@@ -272,7 +330,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds text report widget.
+     * Single text card with stats.
      *
      * @param string $text Text in HTML.
      * @param integer $textindex Text number (starts at 1).
@@ -307,7 +365,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
             $offset += mb_strlen($spanend);
         }
 
-        $header = html_writer::tag('h2', get_string('reporttextnumber', 'tupf', $textindex), ['class' => 'card-header']);
+        $header = html_writer::tag('h3', get_string('reporttextnumber', 'tupf', $textindex), ['class' => 'card-header']);
 
         $footer = html_writer::div(get_string('reporttextusage', 'tupf', $userscount), 'card-footer text-muted');
 
@@ -320,16 +378,156 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Returns an SVG icon from icons.getbootstrap.com.
+     * Texts edition heading, including a reload link when a text is currently being translated.
+     *
+     * @param bool $translating Whether a text is currently being translated.
+     * @return string HTML content.
+     */
+    public function edittexts_heading(bool $translating) {
+        global $PAGE;
+
+        $output = '';
+
+        if (has_capability('mod/tupf:readreport', $PAGE->cm->context)) {
+            $output .= $this->admin_button(
+                get_string('showreport', 'tupf'),
+                new moodle_url('/mod/tupf/report.php', ['id' => $PAGE->cm->id]),
+                'chart',
+                'mb-2 mb-sm-0 float-sm-right',
+            );
+        }
+
+        $output .= $this->output->heading(get_string('edittexts', 'tupf'), 2);
+        $output .= html_writer::tag('p', get_string('edittexts_help', 'tupf'));
+
+        if ($translating) {
+            $output .= html_writer::start_tag('p');
+            $output .= $this->spinner('mr-1');
+            $output .= get_string('refreshtranslationstatus', 'tupf');
+            $output .= html_writer::tag('a', get_string('refreshtranslationstatuslink', 'tupf'), ['href' => $this->page->url, 'class' => 'ml-1']);
+            $output .= html_writer::end_tag('p');
+        }
+
+        return $output;
+    }
+
+    /**
+     * Single text card with stats and delete button.
+     *
+     * @param $text Text instance from `tupf_texts` table.
+     * @param integer $textindex Text number (starts at 1).
+     * @param integer $userscount Total number of users using this text.
+     * @return string HTML content.
+     */
+    public function edittexts_text($text, int $textindex, int $userscount) {
+        require_once('locallib.php');
+
+        $beingtranslated = !$text->translated && $text->translationattempts < TUPF_MAX_TRANSLATION_ATTEMPTS;
+        $failedtranslation = !$text->translated && $text->translationattempts >= TUPF_MAX_TRANSLATION_ATTEMPTS;
+
+        $headercontent = '';
+        $headercontent .= html_writer::start_tag('div', ['class' => 'd-flex flex-row']);
+        $headercontent .= html_writer::tag('h3', get_string('reporttextnumber', 'tupf', $textindex), ['class' => 'flex-grow-1 m-0']);
+        if ($beingtranslated) {
+            $spinner = $this->spinner('mr-1');
+            $headercontent .= html_writer::tag('p', $spinner.get_string('translationloading', 'tupf'), ['class' => 'text-info my-auto text-right']);
+        } else {
+            $headercontent .= $this->button_post(
+                get_string('edittextsdelete', 'tupf'),
+                'deletetextid',
+                $text->id,
+                'btn btn-outline-danger',
+                false,
+                get_string('deletetextconfirmation', 'tupf', $textindex)
+            );
+        }
+        $headercontent .= html_writer::end_tag('div');
+        if ($failedtranslation) {
+            $cross = $this->icon('exclamation-circle', 18, 'mr-1 mb-1');
+            $headercontent .= html_writer::tag('p', $cross.get_string('translationfailed', 'tupf'), ['class' => 'text-danger m-0 mt-2']);
+        }
+        $header = html_writer::tag('div', $headercontent, ['class' => 'card-header']);
+
+        $footer = html_writer::div(get_string('reporttextusage', 'tupf', $userscount), 'card-footer text-muted');
+
+        $content = '';
+        $content .= $header;
+        $content .= html_writer::div($text->text, 'card-body');
+        $content .= $footer;
+
+        return html_writer::div($content, 'card my-4');
+    }
+
+    /**
+     * Text insertion form.
+     *
+     * @return string HTML content.
+     */
+    public function edittexts_form() {
+        global $PAGE;
+
+        $output = '';
+
+        $output .= $this->output->heading(get_string('addtext', 'tupf'), 3, 'mb-2');
+
+        $output .= html_writer::start_tag('form', [
+            'id' => 'tupf-add-text-form',
+            'action' => $this->page->url,
+            'method' => 'post',
+        ]);
+        $output .= html_writer::tag('input', null, [
+            'type' => 'hidden',
+            'name' => 'sesskey',
+            'value' => sesskey(),
+        ]);
+        $output .= html_writer::tag('textarea', null, [
+            'name' => 'newtext',
+            'id' => 'tupf-add-text-textarea',
+            'rows' => 10,
+            'cols' => 80,
+            'class' => 'form-control',
+        ]);
+        $output .= html_writer::tag('button', get_string('add'), [
+            'type' => 'submit',
+            'class' => 'btn btn-primary my-2',
+        ]);
+        $output .= html_writer::end_tag('form');
+
+        // Disables links insertion in editor.
+        $attobuttons = 'collapse = collapse
+            style1 = title, bold, italic
+            list = unorderedlist, orderedlist, indent
+            files = emojipicker, image, media, recordrtc, managefiles
+            style2 = underline, strike, subscript, superscript
+            align = align
+            insert = equation, charmap, table, clear
+            undo = undo
+            accessibility = accessibilitychecker, accessibilityhelper
+            other = html';
+        $editor = editors_get_preferred_editor(FORMAT_HTML);
+        $editor->use_editor(
+            'tupf-add-text-textarea',
+            ['context' => $PAGE->cm->context, 'autosave' => false, 'atto:toolbar' => $attobuttons]
+        );
+
+        return $output;
+    }
+
+    /**
+     * Returns an SVG icon from https://icons.getbootstrap.com.
      *
      * @param string $name Icon name.
      * @param int $size Icon size. Defaults to 32.
+     * @param string $class CSS class. Defaults to empty.
      * @return string HTML content.
      */
-    private function icon(string $name, int $size = 32) {
+    private function icon(string $name, int $size = 32, string $class = '') {
         $svg = [
             'check' => '<path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>',
             'chevron-left' => '<path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>',
+            'exclamation-circle' => '<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>',
+            'chart' => '<path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2z"/>',
+            'pencil' => '<path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>',
             'x' => '<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>',
         ];
 
@@ -340,12 +538,12 @@ class mod_tupf_renderer extends plugin_renderer_base {
         return html_writer::tag(
             'svg',
             $svg[$name],
-            ['xmlns' => 'http://www.w3.org/2000/svg', 'width' => $size, 'height' => $size, 'fill' => 'currentColor', 'viewBox' => '0 0 16 16']
+            ['xmlns' => 'http://www.w3.org/2000/svg', 'width' => $size, 'height' => $size, 'fill' => 'currentColor', 'viewBox' => '0 0 16 16', 'class' => $class]
         );
     }
 
     /**
-     * Builds an error alert displayed if JavaScript is disabled.
+     * Error alert displayed if JavaScript is disabled.
      *
      * @return string HTML content.
      */
@@ -355,12 +553,12 @@ class mod_tupf_renderer extends plugin_renderer_base {
             get_string('errornojavascript', 'tupf'),
             ['href' => 'https://www.enable-javascript.com', 'target' => '_blank']
         );
-        $div = html_writer::div($message, 'alert alert-danger');
+        $div = $this->error($message);
         return html_writer::tag('noscript', $div);
     }
 
     /**
-     * Builds word flashcard widget.
+     * Single word flashcard.
      *
      * @param $word Word object from the `tupf_words` table.
      * @return string HTML content.
@@ -378,16 +576,17 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds POST button form.
+     * POST button form.
      *
      * @param string $content Button content. Usually a localized string.
      * @param string $name Button name for POST data.
      * @param string $value Button value for POST data.
      * @param string $class CSS classes. Defaults to a simple link style.
      * @param bool $disabled Disabled state. Defaults to enabled.
+     * @param string $confirm Content of the optional confirmation popup on submit.
      * @return string HTML content.
      */
-    private function button_post(string $content, string $name, string $value, string $class = 'btn btn-link', bool $disabled = false) {
+    private function button_post(string $content, string $name, string $value, string $class = 'btn btn-link', bool $disabled = false, string $confirm = null) {
         $options = [
             'type' => 'submit',
             'class' => $class,
@@ -413,18 +612,19 @@ class mod_tupf_renderer extends plugin_renderer_base {
             'action' => $this->page->url,
             'method' => 'post',
             'class' => 'inline',
+            'onsubmit' => isset($confirm) ? 'return confirm("'.$confirm.'");' : '',
         ]);
     }
 
     /**
-     * Builds buttons list on a row.
+     * Buttons list on a row.
      *
      * @param array $buttonsdata Key as URL (relatively to the module directory `/mod/tupf/`) and value to button content.
      * @param integer $coursemoduleid Course module ID.
      * @param string $buttonclass Buttons class. Defaults to a secondary button styling.
      * @return string HTML content.
      */
-    private function buttons(array $buttonsdata, int $coursemoduleid, string $buttonclass = 'btn btn-secondary m-2') {
+    private function buttons(array $buttonsdata, int $coursemoduleid, string $buttonclass = 'btn btn-outline-primary m-2') {
         $buttons = '';
 
         foreach ($buttonsdata as $file => $content) {
@@ -433,6 +633,37 @@ class mod_tupf_renderer extends plugin_renderer_base {
         }
 
         return html_writer::div($buttons, 'text-center my-3 my-sm-4');
+    }
+
+    /**
+     * Admin button.
+     *
+     * @param string $name Button name.
+     * @param string $url Link URL.
+     * @param string $icon Optional icon name.
+     * @return void
+     */
+    private function admin_button(string $name, string $url, string $icon = null, string $class = '') {
+        $output = '';
+
+        $output .= html_writer::start_tag('a', ['href' => $url, 'class' => 'btn btn-outline-primary btn-sm '.$class]);
+        if (!empty($icon)) {
+            $output .= $this->icon($icon, 12, 'ml-1 mr-2 mb-1');
+        }
+        $output .= $name;
+        $output .= html_writer::end_tag('a');
+
+        return $output;
+    }
+
+    /**
+     * Loading indicator.
+     *
+     * @param string $class Optional CSS class.
+     * @return string HTML content.
+     */
+    private function spinner($class = '') {
+        return html_writer::tag('span', '', ['class' => 'spinner-border spinner-border-sm '.$class, 'role' => 'status', 'aria-hidden' => 'true']);
     }
 
 }

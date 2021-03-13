@@ -22,27 +22,26 @@ $string['modulename_help'] = 'The TUPF (Text Understanding with Personalized Fla
 * The teacher has access to a report page showing which words are the most selected by their students.';
 $string['cachedef_reviewingwords'] = 'Stores lists of words to review.';
 $string['errornojavascript'] = 'JavaScript is required in this module.';
+$string['errorpendingtexts'] = 'This activity is not ready yet. Come back in a little while.';
+$string['erroraccessdenied'] = 'You don\'t have access to this feature.';
 $string['backhome'] = 'Go back home';
 
 // Module settings (in `mod_form.php`)
 $string['texts'] = 'Texts';
 $string['text'] = 'Text';
 $string['textno'] = 'Text {no}';
-$string['warning'] = 'Warning';
-$string['noeditionwarning'] = 'Be aware that you won\'t be able to modify these settings after submission.';
 $string['textslanguage'] = 'Original texts language (L2)';
 $string['translatedtextslanguage'] = 'Translated texts language (L1)';
 $string['text_help'] = 'Here is where you specify the texts which will be presented to your students.
 
-Each word of these texts will be automatically translated after submission.
+Each word of these texts will be automatically translated after submission. This can take a while.
 
-You cannot edit these texts after submission.
+You cannot edit these texts after submission. You can only delete them and add new ones.
 
 If you leave some of the text fields blank, they won\'t be displayed. If you need more, click the "Insert one more text field" button as many times as necessary.';
 $string['addtextfield'] = 'Insert one more text field';
 
 // `view.php`
-$string['errorpendingtexts'] = 'This activity is not ready yet. Come back in a little while.';
 $string['startselection'] = 'Select Words';
 $string['startreview'] = 'Start reviewing words';
 $string['resumereview'] = 'Continue reviewing words';
@@ -75,3 +74,17 @@ $string['reportmedium'] = 'Some';
 $string['reporthigh'] = 'A lot';
 $string['reporttextnumber'] = 'Text {$a}';
 $string['reporttextusage'] = 'This text is used by {$a} student(s).';
+
+// `edittexts.php`
+$string['edittextsbutton'] = 'Edit texts';
+$string['edittextslink'] = 'Click here to edit your texts.';
+$string['edittexts'] = 'Texts Edition';
+$string['edittexts_help'] = 'Here you can add and delete texts.';
+$string['refreshtranslationstatus'] = 'Some texts are currently being translated. This can take several minutes.';
+$string['refreshtranslationstatuslink'] = 'Click here to refresh translation status.';
+$string['edittextsdelete'] = 'Delete';
+$string['translationloading'] = 'Translation in progress...';
+$string['translationfailed'] = 'Translation failed. Delete the text and retry.';
+$string['deletetextconfirmation'] = 'Do you really want to delete Text {$a}? This action is irreversible and will also delete any flashcard created by the students on the corresponding text.';
+$string['deletetexterror'] = 'An error occurred while deleting the text. Please retry.';
+$string['addtext'] = 'New text';

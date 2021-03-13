@@ -10,37 +10,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Inserts texts inside `tupf_texts` table.
- * Intended to be used within `tupf_add_instance` and `tupf_update_instance` below.
- *
- * @param int $tupfid
- * @param array $textsdata
- * @return void
- */
-function insert_tupf_texts($tupfid, $textsdata) {
-    global $DB;
-
-    $texts = [];
-    foreach ($textsdata as $value) {
-        $text = $value['text']; // Editor form field returns an array.
-        $text = str_replace('&nbsp;', ' ', $text); // Replaces non-breaking spaces with standard spaces.
-        $text = preg_replace('#<a.*?>(.*?)</a>#is', '\1', $text); // Removes links from text.
-        if (isset($text) && $text <> '') {
-            $texts[] = [
-                'tupfid' => $tupfid,
-                'text' => $text,
-                'timemodified' => time(),
-            ];
-        }
-    }
-
-    $DB->insert_records('tupf_texts', $texts);
-
-    // Triggers the texts translation background task.
-    \core\task\manager::queue_adhoc_task(new \mod_tupf\task\translate_texts, true);
-}
-
-/**
  * Adds TUPF instance.
  *
  * @param object $data
@@ -49,11 +18,13 @@ function insert_tupf_texts($tupfid, $textsdata) {
 function tupf_add_instance($data) {
     global $DB;
 
+    require_once('locallib.php');
+
     $data->timemodified = time();
 
     $data->id = $DB->insert_record('tupf', $data);
 
-    insert_tupf_texts($data->id, $data->text);
+    tupf_insert_texts($data->id, $data->text);
 
     return $data->id;
 }
@@ -67,14 +38,16 @@ function tupf_add_instance($data) {
 function tupf_update_instance($data) {
     global $DB;
 
+    require_once('locallib.php');
+
     $data->timemodified = time();
     $data->id = $data->instance;
 
     $DB->update_record('tupf', $data);
 
-    // Prevents texts insertion if already present
+    // Prevents texts insertion if already existing.
     if (!$DB->record_exists('tupf_texts', ['tupfid' => $data->id])) {
-        insert_tupf_texts($data->id, $data->text);
+        tupf_insert_texts($data->id, $data->text);
     }
 
     return true;
@@ -126,6 +99,13 @@ function tupf_delete_instance($id) {
  */
 function tupf_extend_settings_navigation(settings_navigation $settings, navigation_node $node) {
     global $PAGE;
+
+    if (has_capability('mod/tupf:addinstance', $PAGE->cm->context)) {
+        $node->add(
+            get_string('edittextsbutton', 'tupf'),
+            new moodle_url('/mod/tupf/edittexts.php', ['id' => $PAGE->cm->id])
+        );
+    }
 
     if (has_capability('mod/tupf:readreport', $PAGE->cm->context)) {
         $node->add(

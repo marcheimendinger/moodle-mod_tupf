@@ -18,41 +18,48 @@ $coursemoduleid = required_param('id', PARAM_INT);
 $selectedwordsidsstring = optional_param('selected-words', '', PARAM_TEXT);
 
 $tupf = authenticate_and_get_tupf('/mod/tupf/view.php', $coursemoduleid);
+$textsready = tupf_texts_ready($tupf->id, false);
 
 $output = $PAGE->get_renderer('mod_tupf');
 
 echo $output->header();
 
-// Inserts words selection in database if submitted.
-if (!empty($selectedwordsidsstring) &&
+if ($textsready) {
+    echo $output->home_admin_top_links();
+
+    // Inserts words selection in database if submitted.
+    if (!empty($selectedwordsidsstring) &&
         !$DB->record_exists('tupf_selected_words', ['tupfid' => $tupf->id, 'userid' => $USER->id])) {
-    require_sesskey();
+        require_sesskey();
 
-    $selectedwordsids = explode(',', $selectedwordsidsstring);
-    $selectedwordsoject = [];
-    foreach ($selectedwordsids as $wordid) {
-        $selectedwordsoject[] = ['tupfid' => $tupf->id, 'wordid' => $wordid, 'userid' => $USER->id];
+        $selectedwordsids = explode(',', $selectedwordsidsstring);
+        $selectedwordsoject = [];
+        foreach ($selectedwordsids as $wordid) {
+            $selectedwordsoject[] = ['tupfid' => $tupf->id, 'wordid' => $wordid, 'userid' => $USER->id];
+        }
+        $DB->insert_records('tupf_selected_words', $selectedwordsoject);
     }
-    $DB->insert_records('tupf_selected_words', $selectedwordsoject);
-}
 
-if (has_capability('mod/tupf:readreport', $PAGE->cm->context)) {
-    echo $output->report_link($coursemoduleid);
-}
+    if ($DB->record_exists('tupf_selected_words', ['tupfid' => $tupf->id, 'userid' => $USER->id])) { // Home buttons.
+        $reviewingwordindexcache = cache::make('mod_tupf', 'reviewingwordindex');
+        $reviewingwords = $reviewingwordindexcache->get($tupf->id) !== false;
 
-if ($DB->record_exists('tupf_selected_words', ['tupfid' => $tupf->id, 'userid' => $USER->id])) { // Words review
-    $reviewingwordindexcache = cache::make('mod_tupf', 'reviewingwordindex');
-    $reviewingwords = $reviewingwordindexcache->get($tupf->id) !== false;
+        echo $output->home_buttons($coursemoduleid, $tupf->name, $reviewingwords);
+    } else { // Initial words selection.
+        $textsids = $DB->get_fieldset_select('tupf_texts', 'id', 'tupfid = ? AND translated = TRUE', [$tupf->id]);
+        shuffle($textsids);
+        $textid = $textsids[0];
+        $text = $DB->get_record('tupf_texts', ['id' => $textid])->text;
+        $words = $DB->get_records('tupf_words', ['textid' => $textid], 'position');
 
-    echo $output->home_buttons($coursemoduleid, $tupf->name, $reviewingwords);
-} else { // Words selection
-    $textsids = $DB->get_fieldset_select('tupf_texts', 'id', 'tupfid = ? AND translated = TRUE', [$tupf->id]);
-    shuffle($textsids);
-    $textid = $textsids[0];
-    $text = $DB->get_record('tupf_texts', ['id' => $textid])->text;
-    $words = $DB->get_records('tupf_words', ['textid' => $textid], 'position');
+        echo $output->words_selection($text, $words);
+    }
+} else {
+    echo $output->error(get_string('errorpendingtexts', 'tupf'));
 
-    echo $output->words_selection($text, $words);
+    if (has_capability('mod/tupf:addinstance', $PAGE->cm->context)) {
+        echo $output->home_edit_texts_button();
+    }
 }
 
 echo $output->footer();

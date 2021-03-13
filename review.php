@@ -14,6 +14,7 @@ $coursemoduleid = required_param('id', PARAM_INT);
 $buttonaction = optional_param('buttonaction', null, PARAM_ACTION); // 'previous', 'nextcorrect', 'nextwrong'
 
 $tupf = authenticate_and_get_tupf('/mod/tupf/review.php', $coursemoduleid);
+tupf_texts_ready($tupf->id);
 
 $PAGE->navbar->add(get_string('wordsreview', 'tupf'), $PAGE->url);
 

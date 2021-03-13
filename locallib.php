@@ -9,6 +9,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Number of times the translation task will try to process a text before stopping.
+define('TUPF_MAX_TRANSLATION_ATTEMPTS', 3);
+
 /**
  * Checks user's authentication and capabilities, and gets the current TUPF object.
  *
@@ -38,13 +41,69 @@ function authenticate_and_get_tupf(string $url, int $coursemoduleid, string $cap
     $PAGE->set_title($course->shortname.': '.$tupf->name);
     $PAGE->set_heading($course->fullname);
 
-    // Throws an error if texts are not ready (e.g. translated) yet.
-    if (!$DB->record_exists('tupf_texts', ['tupfid' => $tupf->id]) ||
-            $DB->record_exists('tupf_texts', ['tupfid' => $tupf->id, 'translated' => false])) {
+    return $tupf;
+}
+
+/**
+ * Checks whether texts are ready for the current TUPF instance.
+ *
+ * @param int $tupfid TUPF instance ID from `tupf` table.
+ * @param boolean $throwerror Automatically throws an error if texts are not ready. Defaults to `true`.
+ * @return boolean Whether texts are ready.
+ */
+function tupf_texts_ready(int $tupfid, bool $throwerror = true): bool {
+    global $DB;
+
+    $textsready = $DB->record_exists('tupf_texts', ['tupfid' => $tupfid]) &&
+        !$DB->record_exists('tupf_texts', ['tupfid' => $tupfid, 'translated' => false]);
+
+    if ($throwerror && !$textsready) {
         print_error('errorpendingtexts', 'tupf');
     }
 
-    return $tupf;
+    return $textsready;
+}
+
+/**
+ * Cleans new HTML text before recording it.
+ *
+ * @param string $text HTML text.
+ * @return string Cleaned HTML text.
+ */
+function tupf_clean_text(string $text): string {
+    $newtext = str_replace('&nbsp;', ' ', $text); // Replaces non-breaking spaces with standard spaces.
+    $newtext = preg_replace('#<a.*?>(.*?)</a>#is', '\1', $newtext); // Removes links from text.
+    return $newtext;
+}
+
+/**
+ * Inserts texts inside `tupf_texts` table.
+ * Intended to be used in `lib.php`.
+ *
+ * @param int $tupfid
+ * @param array $textsdata
+ * @return void
+ */
+function tupf_insert_texts($tupfid, $textsdata) {
+    global $DB;
+
+    $texts = [];
+    foreach ($textsdata as $value) {
+        $text = $value['text']; // Editor form field returns an array.
+        $text = tupf_clean_text($text);
+        if (isset($text) && $text <> '') {
+            $texts[] = [
+                'tupfid' => $tupfid,
+                'text' => $text,
+                'timemodified' => time(),
+            ];
+        }
+    }
+
+    $DB->insert_records('tupf_texts', $texts);
+
+    // Triggers the texts translation background task.
+    \core\task\manager::queue_adhoc_task(new \mod_tupf\task\translate_texts, true);
 }
 
 /**

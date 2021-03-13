@@ -14,6 +14,7 @@ $coursemoduleid = required_param('id', PARAM_INT);
 $selectedwordsidsstring = optional_param('selected-words', '', PARAM_TEXT);
 
 $tupf = authenticate_and_get_tupf('/mod/tupf/editselection.php', $coursemoduleid);
+tupf_texts_ready($tupf->id);
 
 $PAGE->navbar->add(get_string('selectedwords', 'tupf'), new moodle_url('/mod/tupf/words.php', ['id' => $coursemoduleid]));
 $PAGE->navbar->add(get_string('editselection', 'tupf'), $PAGE->url);

@@ -11,6 +11,8 @@ namespace mod_tupf\task;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot.'/mod/tupf/locallib.php');
+
 class translate_texts extends \core\task\adhoc_task {
 
     /**
@@ -43,9 +45,9 @@ class translate_texts extends \core\task\adhoc_task {
             FROM {tupf_texts}
             INNER JOIN {tupf}
             ON {tupf_texts}.tupfid = {tupf}.id
-            WHERE {tupf_texts}.translated = false AND {tupf_texts}.translationattempts < 3
+            WHERE {tupf_texts}.translated = false AND {tupf_texts}.translationattempts < ?
             ORDER BY {tupf_texts}.timemodified';
-        $textset = $DB->get_recordset_sql($sql, null, 0, $limitmax);
+        $textset = $DB->get_recordset_sql($sql, [TUPF_MAX_TRANSLATION_ATTEMPTS], 0, $limitmax);
 
         if (!$textset->valid()) {
             mtrace('No text to translate. Stopping the task...');
@@ -66,7 +68,7 @@ class translate_texts extends \core\task\adhoc_task {
             if (empty($wordsresult)) {
                 $DB->update_record('tupf_texts', $textnew);
 
-                if ($textnew->translationattempts > 2) {
+                if ($textnew->translationattempts >= TUPF_MAX_TRANSLATION_ATTEMPTS) {
                     mtrace('Text #'.$text->id.' could not be processed (tried '.$textnew->translationattempts.' times).');
                 } else {
                     mtrace('Text #'.$text->id.' could not be processed. Scheduling a new task...');

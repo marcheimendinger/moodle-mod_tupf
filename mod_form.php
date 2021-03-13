@@ -14,7 +14,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_tupf_mod_form extends moodleform_mod {
 
     function definition() {
-        global $CFG, $DB;
+        global $CFG, $DB, $PAGE;
 
         require_once('resources/languages.php');
 
@@ -44,8 +44,11 @@ class mod_tupf_mod_form extends moodleform_mod {
         $mform->addElement('header', 'texts', get_string('texts', 'tupf'));
         $mform->setExpanded('texts');
 
-        $mform->addElement('static', 'information', get_string('warning', 'tupf'),
-            get_string('noeditionwarning', 'tupf'));
+        if ($readonly) {
+            $url = new moodle_url('/mod/tupf/edittexts.php', ['id' => $PAGE->cm->id]);
+            $link = html_writer::tag('a', get_string('edittextslink', 'tupf'), ['href' => $url]);
+            $mform->addElement('static', 'information', get_string('edittexts', 'tupf'), $link);
+        }
 
         $mform
             ->addElement('select', 'language2', get_string('textslanguage', 'tupf'), $tupf_languages)

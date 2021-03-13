@@ -14,6 +14,7 @@ require_once('locallib.php');
 $coursemoduleid = required_param('id', PARAM_INT);
 
 $tupf = authenticate_and_get_tupf('/mod/tupf/report.php', $coursemoduleid, 'mod/tupf:readreport');
+tupf_texts_ready($tupf->id);
 
 $output = $PAGE->get_renderer('mod_tupf');
 
