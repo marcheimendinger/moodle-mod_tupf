@@ -101,7 +101,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output .= $this->buttons(
             [
-                'review.php' => $reviewingwords ? get_string('resumereview', 'tupf') : get_string('startreview', 'tupf'),
+                'review.php#tupf-heading' => $reviewingwords ? get_string('resumereview', 'tupf') : get_string('startreview', 'tupf'),
                 'words.php' => get_string('displaywordslist', 'tupf')
             ],
             $coursemoduleid
@@ -231,7 +231,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * @return string HTML content.
      */
     public function words_review_heading() {
-        return $this->output->heading(get_string('wordsreview', 'tupf'), 2);
+        return $this->output->heading(get_string('wordsreview', 'tupf'), 2, null, 'tupf-heading');
     }
 
     /**
@@ -255,7 +255,15 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $previousdisabled = $wordindex == 1;
         $columns .= html_writer::div(
-            $this->button_post($this->icon('chevron-left'), 'buttonaction', 'previous', 'btn btn-light btn-lg rounded-pill p-2 m-2', $previousdisabled),
+            $this->button_post(
+                $this->icon('chevron-left'),
+                'buttonaction',
+                'previous',
+                'btn btn-light btn-lg rounded-pill p-2 m-2',
+                $previousdisabled,
+                null,
+                '#tupf-heading'
+            ),
             'col-md-1 col-sm-2 order-last order-sm-first text-center'
         );
 
@@ -266,10 +274,13 @@ class mod_tupf_renderer extends plugin_renderer_base {
             $this->icon('check'),
             'buttonaction',
             'nextcorrect',
-            'btn btn-success btn-lg rounded-pill p-2 m-2'
+            'btn btn-success btn-lg rounded-pill p-2 m-2',
+            false,
+            null,
+            '#tupf-heading'
         );
         $buttons .= $this->button_post(
-            $this->icon('x'), 'buttonaction', 'nextwrong', 'btn btn-danger btn-lg rounded-pill p-2 m-2'
+            $this->icon('x'), 'buttonaction', 'nextwrong', 'btn btn-danger btn-lg rounded-pill p-2 m-2', false, null, '#tupf-heading'
         );
         $columns .= html_writer::div($buttons, 'col-md-1 col-sm-2 mt-3 mt-sm-0 text-center');
 
@@ -588,9 +599,10 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * @param string $class CSS classes. Defaults to a simple link style.
      * @param bool $disabled Disabled state. Defaults to enabled.
      * @param string $confirm Content of the optional confirmation popup on submit.
+     * @param string $anchor Optional anchor to an element on the page after button click.
      * @return string HTML content.
      */
-    private function button_post(string $content, string $name, string $value, string $class = 'btn btn-link', bool $disabled = false, string $confirm = null) {
+    private function button_post(string $content, string $name, string $value, string $class = 'btn btn-link', bool $disabled = false, string $confirm = null, string $anchor = null) {
         $options = [
             'type' => 'submit',
             'class' => $class,
@@ -613,7 +625,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $formcontent .= html_writer::tag('button', $content, $options);
 
         return html_writer::tag('form', $formcontent, [
-            'action' => $this->page->url,
+            'action' => $this->page->url.$anchor,
             'method' => 'post',
             'class' => 'inline',
             'onsubmit' => isset($confirm) ? 'return confirm("'.$confirm.'");' : '',
