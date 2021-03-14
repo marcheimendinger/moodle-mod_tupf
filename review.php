@@ -29,7 +29,15 @@ $reviewingwordindexcache = cache::make('mod_tupf', 'reviewingwordindex');
 
 $reviewingwordindex = $reviewingwordindexcache->get($tupf->id);
 
-function get_word_flashcard(array $wordsids, int $wordindex) {
+/**
+ * Gets the word from database and HTML from renderer.
+ *
+ * @param array $wordsids Word ID from `tupf_words` table.
+ * @param integer $wordindex Current word index from cache.
+ * @param boolean $backward Whether the user went backward from another word. Defaults to `false`.
+ * @return string HTML content.
+ */
+function get_word_flashcard(array $wordsids, int $wordindex, bool $backward = false) {
     global $DB, $USER, $output, $coursemoduleid, $tupf;
 
     $wordid = $wordsids[$wordindex];
@@ -40,7 +48,7 @@ function get_word_flashcard(array $wordsids, int $wordindex) {
         print_error('notavailable');
     }
 
-    return $output->words_review_flashcard($coursemoduleid, $word, $wordindex + 1, count($wordsids));
+    return $output->words_review_flashcard($coursemoduleid, $word, $wordindex + 1, count($wordsids), $backward);
 }
 
 if ($reviewingwordindex === false) { // Start review.
@@ -103,7 +111,7 @@ if ($reviewingwordindex === false) { // Start review.
     } else { // Shows flashcard.
         $reviewingwordindexcache->set($tupf->id, $reviewingwordindex);
 
-        echo get_word_flashcard($reviewingwordsids, $reviewingwordindex);
+        echo get_word_flashcard($reviewingwordsids, $reviewingwordindex, $buttonaction == 'previous');
     }
 }
 

@@ -241,9 +241,10 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * @param $word Word object from the `tupf_words` table.
      * @param integer $wordindex Position of the currently displayed word.
      * @param integer $totalwordscount Count of all words to review.
+     * @param bool $backward Whether the user went backward. Defaults to `false`.
      * @return string HTML content.
      */
-    public function words_review_flashcard(int $coursemoduleid, $word, int $wordindex, int $totalwordscount) {
+    public function words_review_flashcard(int $coursemoduleid, $word, int $wordindex, int $totalwordscount, bool $backward = false) {
         $this->page->requires->js_call_amd('mod_tupf/flashcard', 'init');
 
         $output = '';
@@ -258,7 +259,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
             'col-md-1 col-sm-2 order-last order-sm-first text-center'
         );
 
-        $columns .= html_writer::div($this->flashcard($word), 'col-sm-auto');
+        $columns .= html_writer::div($this->flashcard($word, $backward), 'col-sm-auto');
 
         $buttons = '';
         $buttons .= $this->button_post(
@@ -561,9 +562,10 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * Single word flashcard.
      *
      * @param $word Word object from the `tupf_words` table.
+     * @param $backward Whether use a backward animation. Defaults to `false`.
      * @return string HTML content.
      */
-    private function flashcard($word) {
+    private function flashcard($word, bool $backward = false) {
         $front = html_writer::tag('h4', $word->language1, ['class' => 'align-self-center mb-0']);
         $front = html_writer::div($front, 'tupf-flashcard-front d-flex justify-content-center');
 
@@ -572,7 +574,9 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $flashcard = html_writer::div($front.$back, 'tupf-flashcard-inner');
 
-        return html_writer::div($flashcard, 'tupf-flashcard-container mx-auto');
+        $animation = $backward ? 'tupf-animate-from-left' : 'tupf-animate-from-right';
+
+        return html_writer::div($flashcard, 'tupf-flashcard-container mx-auto '.$animation);
     }
 
     /**
