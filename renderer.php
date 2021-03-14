@@ -51,7 +51,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $content = '';
 
         if (has_capability('mod/tupf:readreport', $PAGE->cm->context)) {
-            $content .= $this->admin_button(
+            $content .= $this->small_action_button(
                 get_string('showreport', 'tupf'),
                 new moodle_url('/mod/tupf/report.php', ['id' => $PAGE->cm->id]),
                 'chart'
@@ -59,14 +59,14 @@ class mod_tupf_renderer extends plugin_renderer_base {
         }
 
         if (has_capability('mod/tupf:addinstance', $PAGE->cm->context)) {
-            $content .= $this->admin_button(
+            $content .= $this->small_action_button(
                 get_string('edittextsbutton', 'tupf'),
                 new moodle_url('/mod/tupf/edittexts.php', ['id' => $PAGE->cm->id]),
                 'pencil'
             );
         }
 
-        return empty($content) ? '' : html_writer::div($content, 'btn-group float-none float-sm-right mb-2 mb-sm-0');
+        return empty($content) ? '' : html_writer::div($content, 'btn-group mb-2 mb-sm-0 float-sm-right');
     }
 
     /**
@@ -80,32 +80,25 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $icon = $this->icon('pencil', 14, 'mr-2 mb-1');
 
-        return $this->buttons(
-            ['edittexts.php' => $icon.get_string('edittextsbutton', 'tupf')],
-            $PAGE->cm->id
-        );
+        return $this->buttons(['edittexts.php' => $icon.get_string('edittextsbutton', 'tupf')]);
     }
 
     /**
      * Homepage buttons for standard user.
      *
-     * @param integer $coursemoduleid Course module ID.
      * @param string $tupfname Module instance name.
      * @param bool $reviewingwords Whether the user is currently reviewing words.
      * @return string HTML content.
      */
-    public function home_buttons(int $coursemoduleid, string $tupfname, bool $reviewingwords) {
+    public function home_buttons(string $tupfname, bool $reviewingwords) {
         $output = '';
 
         $output .= $this->output->heading($tupfname, 2);
 
-        $output .= $this->buttons(
-            [
-                'review.php#tupf-heading' => $reviewingwords ? get_string('resumereview', 'tupf') : get_string('startreview', 'tupf'),
-                'words.php' => get_string('displaywordslist', 'tupf')
-            ],
-            $coursemoduleid
-        );
+        $output .= $this->buttons([
+            'review.php#tupf-heading' => $reviewingwords ? get_string('resumereview', 'tupf') : get_string('startreview', 'tupf'),
+            'words.php' => get_string('displaywordslist', 'tupf')
+        ]);
 
         return $output;
     }
@@ -175,13 +168,21 @@ class mod_tupf_renderer extends plugin_renderer_base {
      *
      * @param array $words Selected words for the current user.
      * @param object $tupf Module instance from `tupf` table.
-     * @param integer $coursemoduleid Course module ID.
      * @return string HTML content.
      */
-    public function words_list(array $words, object $tupf, int $coursemoduleid) {
+    public function words_list(array $words, object $tupf) {
+        global $PAGE;
+
         require_once('resources/languages.php');
 
         $output = '';
+
+        $output .= $this->small_action_button(
+            get_string('editselectionbutton', 'tupf'),
+            new moodle_url('/mod/tupf/editselection.php', ['id' => $PAGE->cm->id]),
+            'pencil',
+            'mb-2 mb-sm-0 float-sm-right'
+        );
 
         $output .= $this->output->heading(get_string('selectedwords', 'tupf'), 2);
 
@@ -216,12 +217,6 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output .= html_writer::table($table);
 
-        $output .= $this->buttons(
-            ['editselection.php' => get_string('editselectionbutton', 'tupf')],
-            $coursemoduleid,
-            'btn btn-secondary m-2'
-        );
-
         return $output;
     }
 
@@ -237,14 +232,13 @@ class mod_tupf_renderer extends plugin_renderer_base {
     /**
      * Word flashcard for words review.
      *
-     * @param integer $coursemoduleid Course module ID.
      * @param $word Word object from the `tupf_words` table.
      * @param integer $wordindex Position of the currently displayed word.
      * @param integer $totalwordscount Count of all words to review.
      * @param bool $backward Whether the user went backward. Defaults to `false`.
      * @return string HTML content.
      */
-    public function words_review_flashcard(int $coursemoduleid, $word, int $wordindex, int $totalwordscount, bool $backward = false) {
+    public function words_review_flashcard($word, int $wordindex, int $totalwordscount, bool $backward = false) {
         $this->page->requires->js_call_amd('mod_tupf/flashcard', 'init');
 
         $output = '';
@@ -294,18 +288,17 @@ class mod_tupf_renderer extends plugin_renderer_base {
     /**
      * Words review ending buttons.
      *
-     * @param integer $coursemoduleid Course module ID.
      * @return string HTML content.
      */
-    public function words_review_end_buttons(int $coursemoduleid) {
+    public function words_review_end_buttons() {
         $output = '';
 
         $output .= html_writer::tag('p', get_string('reviewend', 'tupf'), ['class' => 'text-center']);
 
-        $output .= $this->buttons(
-            ['view.php' => get_string('backhome', 'tupf'), 'review.php' => get_string('restartreview', 'tupf')],
-            $coursemoduleid
-        );
+        $output .= $this->buttons([
+            'view.php' => get_string('backhome', 'tupf'),
+            'review.php' => get_string('restartreview', 'tupf')
+        ]);
 
         return $output;
     }
@@ -321,7 +314,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $output = '';
 
         if (has_capability('mod/tupf:addinstance', $PAGE->cm->context)) {
-            $output .= $this->admin_button(
+            $output .= $this->small_action_button(
                 get_string('edittextsbutton', 'tupf'),
                 new moodle_url('/mod/tupf/edittexts.php', ['id' => $PAGE->cm->id]),
                 'pencil',
@@ -401,7 +394,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $output = '';
 
         if (has_capability('mod/tupf:readreport', $PAGE->cm->context)) {
-            $output .= $this->admin_button(
+            $output .= $this->small_action_button(
                 get_string('showreport', 'tupf'),
                 new moodle_url('/mod/tupf/report.php', ['id' => $PAGE->cm->id]),
                 'chart',
@@ -636,15 +629,16 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * Buttons list on a row.
      *
      * @param array $buttonsdata Key as URL (relatively to the module directory `/mod/tupf/`) and value to button content.
-     * @param integer $coursemoduleid Course module ID.
      * @param string $buttonclass Buttons class. Defaults to a secondary button styling.
      * @return string HTML content.
      */
-    private function buttons(array $buttonsdata, int $coursemoduleid, string $buttonclass = 'btn btn-outline-primary m-2') {
+    private function buttons(array $buttonsdata, string $buttonclass = 'btn btn-outline-primary m-2') {
+        global $PAGE;
+
         $buttons = '';
 
         foreach ($buttonsdata as $file => $content) {
-            $url = new moodle_url('/mod/tupf/'.$file, ['id' => $coursemoduleid]);
+            $url = new moodle_url('/mod/tupf/'.$file, ['id' => $PAGE->cm->id]);
             $buttons .= html_writer::tag('a', $content, ['href' => $url, 'class' => $buttonclass]);
         }
 
@@ -652,14 +646,15 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Admin button.
+     * Small action button.
      *
      * @param string $name Button name.
      * @param string $url Link URL.
      * @param string $icon Optional icon name.
+     * @param string $class Optional additional CSS class.
      * @return void
      */
-    private function admin_button(string $name, string $url, string $icon = null, string $class = '') {
+    private function small_action_button(string $name, string $url, string $icon = null, string $class = '') {
         $output = '';
 
         $output .= html_writer::start_tag('a', ['href' => $url, 'class' => 'btn btn-outline-primary btn-sm '.$class]);

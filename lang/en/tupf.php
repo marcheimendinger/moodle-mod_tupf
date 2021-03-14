@@ -59,7 +59,7 @@ $string['restartreview'] = 'Restart reviewing words';
 // `words.php`
 $string['selectedwords'] = 'Selected Words';
 $string['correctpercentage'] = 'Correct Percentage';
-$string['editselectionbutton'] = 'Edit words selection';
+$string['editselectionbutton'] = 'Edit selection';
 
 // `editselection.php`
 $string['editselection'] = 'Edit Selected Words';

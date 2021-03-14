@@ -48,7 +48,7 @@ function get_word_flashcard(array $wordsids, int $wordindex, bool $backward = fa
         print_error('notavailable');
     }
 
-    return $output->words_review_flashcard($coursemoduleid, $word, $wordindex + 1, count($wordsids), $backward);
+    return $output->words_review_flashcard($word, $wordindex + 1, count($wordsids), $backward);
 }
 
 if ($reviewingwordindex === false) { // Start review.
@@ -107,7 +107,7 @@ if ($reviewingwordindex === false) { // Start review.
         $reviewingwordsidscache->delete($tupf->id);
         $reviewingwordindexcache->delete($tupf->id);
 
-        echo $output->words_review_end_buttons($coursemoduleid);
+        echo $output->words_review_end_buttons();
     } else { // Shows flashcard.
         $reviewingwordindexcache->set($tupf->id, $reviewingwordindex);
 

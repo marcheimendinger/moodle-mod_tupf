@@ -44,7 +44,7 @@ if ($textsready) {
         $reviewingwordindexcache = cache::make('mod_tupf', 'reviewingwordindex');
         $reviewingwords = $reviewingwordindexcache->get($tupf->id) !== false;
 
-        echo $output->home_buttons($coursemoduleid, $tupf->name, $reviewingwords);
+        echo $output->home_buttons($tupf->name, $reviewingwords);
     } else { // Initial words selection.
         $textsids = $DB->get_fieldset_select('tupf_texts', 'id', 'tupfid = ? AND translated = TRUE', [$tupf->id]);
         shuffle($textsids);
