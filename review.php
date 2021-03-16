@@ -45,10 +45,27 @@ function get_word_flashcard(array $wordsids, int $wordindex, bool $backward = fa
     $word = $DB->get_record('tupf_words', ['id' => $wordid]);
 
     if (empty($word)) {
-        print_error('notavailable');
+        delete_cache_and_back_home();
+        return;
     }
 
     return $output->words_review_flashcard($word, $wordindex + 1, count($wordsids), $backward);
+}
+
+/**
+ * Deletes session cache and redirects to homepage.
+ * Useful if the teacher deletes a text while a student is reviewing words from the same text.
+ *
+ * @return void
+ */
+function delete_cache_and_back_home() {
+    global $tupf, $reviewingwordsidscache, $reviewingwordindexcache, $coursemoduleid;
+
+    $reviewingwordsidscache->delete($tupf->id);
+    $reviewingwordindexcache->delete($tupf->id);
+
+    $url = new moodle_url('/mod/tupf/view.php', ['id' => $coursemoduleid]);
+    redirect($url);
 }
 
 if ($reviewingwordindex === false) { // Start review.
