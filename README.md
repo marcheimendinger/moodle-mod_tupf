@@ -13,7 +13,8 @@ The TUPF activity module for [Moodle](https://moodle.org) enables students to ea
 * Students can review their selected words using virtual flashcards and indicate whether they knew the word or not.
 * Students can list all their selected words with a percentage of the number of correct times for each word.
 * Students can edit their words selection at any time.
-* Teachers have access to a report page (a *heat text*) showing which words are the most selected by the students.
+* Teachers can add new texts and delete existing ones at any time. They cannot edit existing texts.
+* Teachers have access to a report page showing which words are mostly selected by their students.
 
 ## Technical Details
 

@@ -19,7 +19,8 @@ $string['modulename_help'] = 'The TUPF (Text Understanding with Personalized Fla
 * Students can review their selected words using virtual flashcards and indicate whether they knew the word.
 * Students can list all their selected words with a percentage of the number of correct times for each word.
 * Students can edit their words selection at any time.
-* The teacher has access to a report page showing which words are the most selected by their students.';
+* Teachers can add new texts and delete existing ones at any time. They cannot edit existing texts.
+* Teachers have access to a report page showing which words are mostly selected by their students.';
 $string['cachedef_reviewingwords'] = 'Stores lists of words to review.';
 $string['errornojavascript'] = 'JavaScript is required in this module.';
 $string['errorpendingtexts'] = 'This activity is not ready yet. Come back in a little while.';
