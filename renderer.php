@@ -78,9 +78,11 @@ class mod_tupf_renderer extends plugin_renderer_base {
     public function home_edit_texts_button() {
         global $PAGE;
 
-        $icon = $this->icon('pencil', 14, 'mr-2 mb-1');
-
-        return $this->buttons(['edittexts.php' => $icon.get_string('edittextsbutton', 'tupf')]);
+        return $this->buttons([[
+            'file' => 'edittexts.php',
+            'text' => $icon.get_string('edittextsbutton', 'tupf'),
+            'icon' => 'pencil',
+        ]]);
     }
 
     /**
@@ -96,8 +98,16 @@ class mod_tupf_renderer extends plugin_renderer_base {
         $output .= $this->output->heading($tupfname, 2);
 
         $output .= $this->buttons([
-            'review.php#tupf-heading' => $reviewingwords ? get_string('resumereview', 'tupf') : get_string('startreview', 'tupf'),
-            'words.php' => get_string('displaywordslist', 'tupf')
+            [
+                'file' => 'review.php#tupf-heading',
+                'text' => $reviewingwords ? get_string('resumereview', 'tupf') : get_string('startreview', 'tupf'),
+                'icon' => 'card-text',
+            ],
+            [
+                'file' => 'words.php',
+                'text' => get_string('displaywordslist', 'tupf'),
+                'icon' => 'list',
+            ],
         ]);
 
         return $output;
@@ -293,11 +303,19 @@ class mod_tupf_renderer extends plugin_renderer_base {
     public function words_review_end_buttons() {
         $output = '';
 
-        $output .= html_writer::tag('p', get_string('reviewend', 'tupf'), ['class' => 'text-center']);
+        $output .= html_writer::tag('p', get_string('reviewend', 'tupf'), ['class' => 'text-center mt-4']);
 
         $output .= $this->buttons([
-            'view.php' => get_string('backhome', 'tupf'),
-            'review.php' => get_string('restartreview', 'tupf')
+            [
+                'file' => 'view.php',
+                'text' => get_string('backhome', 'tupf'),
+                'icon' => 'house',
+            ],
+            [
+                'file' => 'review.php',
+                'text' => get_string('restartreview', 'tupf'),
+                'icon' => 'repeat',
+            ],
         ]);
 
         return $output;
@@ -407,7 +425,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         if ($translating) {
             $output .= html_writer::start_tag('p');
-            $output .= $this->spinner('mr-1');
+            $output .= $this->icon('exclamation-circle', 18, 'mr-1 text-info align-text-bottom');
             $output .= get_string('refreshtranslationstatus', 'tupf');
             $output .= html_writer::tag('a', get_string('refreshtranslationstatuslink', 'tupf'), ['href' => $this->page->url, 'class' => 'ml-1']);
             $output .= html_writer::end_tag('p');
@@ -528,11 +546,15 @@ class mod_tupf_renderer extends plugin_renderer_base {
      */
     private function icon(string $name, int $size = 32, string $class = '') {
         $svg = [
+            'card-text' => '<path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/><path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>',
+            'chart' => '<path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2z"/>',
             'check' => '<path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>',
             'chevron-left' => '<path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>',
             'exclamation-circle' => '<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>',
-            'chart' => '<path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2z"/>',
+            'house' => '<path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>',
+            'list' => '<path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>',
             'pencil' => '<path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>',
+            'repeat' => '<path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/><path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>',
             'x' => '<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>',
         ];
 
@@ -628,7 +650,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
     /**
      * Buttons list on a row.
      *
-     * @param array $buttonsdata Key as URL (relatively to the module directory `/mod/tupf/`) and value to button content.
+     * @param array $buttonsdata Array of arrays with `file` (relatively to the module directory `/mod/tupf/`), `text`, and optional `icon`.
      * @param string $buttonclass Buttons class. Defaults to a secondary button styling.
      * @return string HTML content.
      */
@@ -637,9 +659,14 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $buttons = '';
 
-        foreach ($buttonsdata as $file => $content) {
-            $url = new moodle_url('/mod/tupf/'.$file, ['id' => $PAGE->cm->id]);
-            $buttons .= html_writer::tag('a', $content, ['href' => $url, 'class' => $buttonclass]);
+        foreach ($buttonsdata as $buttondata) {
+            $url = new moodle_url('/mod/tupf/'.$buttondata['file'], ['id' => $PAGE->cm->id]);
+            $buttons .= html_writer::start_tag('a', ['href' => $url, 'class' => $buttonclass]);
+            if (array_key_exists('icon', $buttondata)) {
+                $buttons .= $this->icon($buttondata['icon'], 16, 'mr-2 align-text-bottom');
+            }
+            $buttons .= $buttondata['text'];
+            $buttons .= html_writer::end_tag('a');
         }
 
         return html_writer::div($buttons, 'text-center my-3 my-sm-4');

@@ -25,7 +25,7 @@ $string['cachedef_reviewingwords'] = 'Stores lists of words to review.';
 $string['errornojavascript'] = 'JavaScript is required in this module.';
 $string['errorpendingtexts'] = 'This activity is not ready yet. Come back in a little while.';
 $string['erroraccessdenied'] = 'You don\'t have access to this feature.';
-$string['backhome'] = 'Go back home';
+$string['backhome'] = 'Back home';
 
 // Module settings (in `mod_form.php`)
 $string['texts'] = 'Texts';
