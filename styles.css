@@ -89,7 +89,7 @@
 
 @keyframes slideInFromLeft {
     0% {
-        transform: translateX(-50vw);
+        transform: translateX(-30vw);
         opacity: 0;
     }
     100% {
@@ -100,7 +100,7 @@
 
 @keyframes slideInFromRight {
     0% {
-        transform: translateX(50vw);
+        transform: translateX(30vw);
         opacity: 0;
     }
     100% {
@@ -110,19 +110,9 @@
 }
 
 .tupf-animate-from-left {
-    animation: .3s ease-in-out 0s 1 slideInFromLeft;
+    animation: .3s ease-out 0s 1 slideInFromLeft;
 }
 
 .tupf-animate-from-right {
-    animation: .3s ease-in-out 0s 1 slideInFromRight;
-}
-
-@media (min-width: 576px) {
-    .tupf-animate-from-left {
-        animation: .45s ease-in-out 0s 1 slideInFromLeft;
-    }
-
-    .tupf-animate-from-right {
-        animation: .45s ease-in-out 0s 1 slideInFromRight;
-    }
+    animation: .3s ease-out 0s 1 slideInFromRight;
 }
