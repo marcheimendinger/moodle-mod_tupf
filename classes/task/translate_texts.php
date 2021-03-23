@@ -80,7 +80,10 @@ class translate_texts extends \core\task\adhoc_task {
                         'translationerror',
                         $textnew->userid,
                         get_string('messageprovider:translationerror', 'tupf'),
-                        get_string('translationerror_body', 'tupf')
+                        get_string('translationerror_body', 'tupf'),
+                        $textnew->tupfid,
+                        'edittexts.php',
+                        get_string('translationerror_link', 'tupf')
                     );
 
                     mtrace('Text #'.$text->id.' could not be processed (tried '.$textnew->translationattempts.' times).');
@@ -116,7 +119,10 @@ class translate_texts extends \core\task\adhoc_task {
                     'translationconfirmation',
                     $textnew->userid,
                     get_string('messageprovider:translationconfirmation', 'tupf'),
-                    get_string('translationconfirmation_body', 'tupf')
+                    get_string('translationconfirmation_body', 'tupf'),
+                    $textnew->tupfid,
+                    'view.php',
+                    get_string('translationconfirmation_link', 'tupf')
                 );
             }
 

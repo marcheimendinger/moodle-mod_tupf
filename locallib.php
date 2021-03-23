@@ -113,9 +113,12 @@ function tupf_insert_texts($tupfid, $textsdata) {
  * @param integer $userid User ID to send notification to.
  * @param string $subject Subject text.
  * @param string $body Body text without HTML nor Markdown.
+ * @param int $tupfid TUPF module ID.
+ * @param string $url Link URL relatively to the module directory (`/mod/tupf/`).
+ * @param string $linkname Link name.
  * @return void
  */
-function tupf_send_notification(string $name, int $userid, string $subject, string $body) {
+function tupf_send_notification(string $name, int $userid, string $subject, string $body, int $tupfid, string $url, string $linkname) {
     $message = new \core\message\message();
     $message->component = 'mod_tupf';
     $message->name = $name; // Notification name from `messages.php`.
@@ -127,6 +130,11 @@ function tupf_send_notification(string $name, int $userid, string $subject, stri
     $message->fullmessagehtml = '<p>'.$body.'</p>';
     $message->smallmessage = $body;
     $message->notification = true; // Notification generated from Moodle, not a user-to-user message.
+
+    $coursemoduleid = get_coursemodule_from_instance('tupf', $tupfid)->id;
+    $message->contexturl = (new \moodle_url('/mod/tupf/'.$url, ['id' => $coursemoduleid]));
+    $message->contexturlname = $linkname;
+
     message_send($message);
 }
 

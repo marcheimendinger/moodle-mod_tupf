@@ -24,6 +24,8 @@ $string['modulename_help'] = 'The TUPF (Text Understanding with Personalized Fla
 $string['cachedef_reviewingwords'] = 'Stores lists of words to review.';
 $string['errornojavascript'] = 'JavaScript is required in this activity.';
 $string['errorpendingtexts'] = 'This activity is not ready yet. Come back in a little while.';
+$string['errorpendingtextsadmin'] = 'This activity is not ready yet. You will be notified when this is done.';
+$string['errortranslationsfailed'] = 'Some texts could not be translated. Delete them and retry.';
 $string['erroraccessdenied'] = 'You don\'t have access to this feature.';
 $string['backhome'] = 'Back home';
 
@@ -45,8 +47,10 @@ $string['addtextfield'] = 'Insert one more text field';
 // Messages
 $string['messageprovider:translationconfirmation'] = 'Texts Successfully Translated';
 $string['translationconfirmation_body'] = 'Your texts have been successfully translated. This activity is now ready to be used by your students.';
+$string['translationconfirmation_link'] = 'Show activity';
 $string['messageprovider:translationerror'] = 'Text Translation Error';
 $string['translationerror_body'] = 'An error occurred while translating a text. Delete it and retry.';
+$string['translationerror_link'] = 'Edit texts';
 
 // `view.php`
 $string['startselection'] = 'Select Words';

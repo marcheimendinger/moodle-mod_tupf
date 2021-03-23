@@ -55,10 +55,26 @@ if ($textsready) {
         echo $output->words_selection($text, $words);
     }
 } else {
-    echo $output->error(get_string('errorpendingtexts', 'tupf'));
-
     if (has_capability('mod/tupf:addinstance', $PAGE->cm->context)) {
+        $translating = $DB->record_exists_select(
+            'tupf_texts',
+            'tupfid = ? AND translated = false AND translationattempts < ?',
+            [$tupf->id, TUPF_MAX_TRANSLATION_ATTEMPTS]
+        );
+
+        if ($translating) {
+            if ($tupf->userid == $USER->id) {
+                echo $output->error(get_string('errorpendingtextsadmin', 'tupf'));
+            } else {
+                echo $output->error(get_string('errorpendingtexts', 'tupf'));
+            }
+        } else {
+            echo $output->error(get_string('errortranslationsfailed', 'tupf'));
+        }
+
         echo $output->home_edit_texts_button();
+    } else {
+        echo $output->error(get_string('errorpendingtexts', 'tupf'));
     }
 }
 
