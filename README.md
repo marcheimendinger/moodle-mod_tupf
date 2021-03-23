@@ -9,12 +9,23 @@ The TUPF activity module for [Moodle](https://moodle.org) enables students to ea
 * The teacher initially submits one or more texts in the taught language (L2).
 * These texts are automatically translated after submission (this can take several minutes) using an [adhoc task](https://docs.moodle.org/dev/Task_API#Adhoc_tasks).
 * The translation is done using an external REST API built especially for the module.
+* The teacher who initially created the activity is notified (by popup when logged-in or by email when logged-out) when translation is done.
 * Students are asked on their first visit to select unknown words in one of the randomly selected texts.
-* Students can review their selected words using virtual flashcards and indicate whether they knew the word or not.
+* Students can review their selected words using virtual flashcards and indicate whether they knew the word.
 * Students can list all their selected words with a percentage of the number of correct times for each word.
 * Students can edit their words selection at any time.
 * Teachers can add new texts and delete existing ones at any time. They cannot edit existing texts.
 * Teachers have access to a report page showing which words are mostly selected by their students.
+
+## Capabilities
+
+Three different capabilities are used by the module.
+
+| Capability             | Granted to (by default)               | Description                              |
+| ---------------------- | ------------------------------------- | ---------------------------------------- |
+| `mod/tupf:review`      | Students, editing teachers, teachers  | Can select and review words from a text. |
+| `mod/tupf:readreport`  | Teachers, editing teachers            | Can read report about texts usage.       |
+| `mod/tupf:addinstance` | Editing teachers                      | Can add and delete texts.                |
 
 ## Technical Details
 

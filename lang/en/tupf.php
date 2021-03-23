@@ -15,6 +15,7 @@ $string['modulename_help'] = 'The TUPF (Text Understanding with Personalized Fla
 
 * The teacher initially submits one or more texts in the taught language (L2).
 * These texts are automatically translated by the module (this can take several minutes).
+* The teacher who initially created the activity is notified (by popup when logged-in or by email when logged-out) when translation is done.
 * Students are asked on their first visit to select unknown words in one of the randomly selected texts.
 * Students can review their selected words using virtual flashcards and indicate whether they knew the word.
 * Students can list all their selected words with a percentage of the number of correct times for each word.
