@@ -16,11 +16,12 @@ defined('MOODLE_INTERNAL') || die();
  * @return int new tupf instance id
  */
 function tupf_add_instance($data) {
-    global $DB;
+    global $DB, $USER;
 
     require_once('locallib.php');
 
     $data->timemodified = time();
+    $data->userid = $USER->id;
 
     $data->id = $DB->insert_record('tupf', $data);
 

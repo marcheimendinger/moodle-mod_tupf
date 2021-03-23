@@ -107,6 +107,30 @@ function tupf_insert_texts($tupfid, $textsdata) {
 }
 
 /**
+ * Sends a module notification to a given user.
+ *
+ * @param string $name Notification name from `messages.php`.
+ * @param integer $userid User ID to send notification to.
+ * @param string $subject Subject text.
+ * @param string $body Body text without HTML nor Markdown.
+ * @return void
+ */
+function tupf_send_notification(string $name, int $userid, string $subject, string $body) {
+    $message = new \core\message\message();
+    $message->component = 'mod_tupf';
+    $message->name = $name; // Notification name from `messages.php`.
+    $message->userfrom = \core_user::get_noreply_user();
+    $message->userto = $userid;
+    $message->subject = $subject;
+    $message->fullmessage = $body;
+    $message->fullmessageformat = FORMAT_MARKDOWN;
+    $message->fullmessagehtml = '<p>'.$body.'</p>';
+    $message->smallmessage = $body;
+    $message->notification = true; // Notification generated from Moodle, not a user-to-user message.
+    message_send($message);
+}
+
+/**
  * Replacement to built-in `substr_replace` with multi-byte handling.
  * From: https://stackoverflow.com/questions/11239597/substr-replace-encoding-in-php/35638691
  *

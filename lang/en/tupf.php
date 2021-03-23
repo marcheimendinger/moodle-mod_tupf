@@ -22,7 +22,7 @@ $string['modulename_help'] = 'The TUPF (Text Understanding with Personalized Fla
 * Teachers can add new texts and delete existing ones at any time. They cannot edit existing texts.
 * Teachers have access to a report page showing which words are mostly selected by their students.';
 $string['cachedef_reviewingwords'] = 'Stores lists of words to review.';
-$string['errornojavascript'] = 'JavaScript is required in this module.';
+$string['errornojavascript'] = 'JavaScript is required in this activity.';
 $string['errorpendingtexts'] = 'This activity is not ready yet. Come back in a little while.';
 $string['erroraccessdenied'] = 'You don\'t have access to this feature.';
 $string['backhome'] = 'Back home';
@@ -41,6 +41,12 @@ You cannot edit these texts after submission. You can only delete them and add n
 
 If you leave some of the text fields blank, they won\'t be displayed. If you need more, click the "Insert one more text field" button as many times as necessary.';
 $string['addtextfield'] = 'Insert one more text field';
+
+// Messages
+$string['messageprovider:translationconfirmation'] = 'Texts Successfully Translated';
+$string['translationconfirmation_body'] = 'Your texts have been successfully translated. This activity is now ready to be used by your students.';
+$string['messageprovider:translationerror'] = 'Text Translation Error';
+$string['translationerror_body'] = 'An error occurred while translating a text. Delete it and retry.';
 
 // `view.php`
 $string['startselection'] = 'Select Words';

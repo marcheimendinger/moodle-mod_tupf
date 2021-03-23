@@ -41,7 +41,14 @@ class translate_texts extends \core\task\adhoc_task {
         $count = 0;
 
         // Gets oldest untranslated texts.
-        $sql = 'SELECT {tupf_texts}.id, {tupf_texts}.text, {tupf_texts}.translated, {tupf_texts}.translationattempts, {tupf}.language1, {tupf}.language2
+        $sql = 'SELECT  {tupf_texts}.id,
+                        {tupf_texts}.tupfid,
+                        {tupf_texts}.text,
+                        {tupf_texts}.translated,
+                        {tupf_texts}.translationattempts,
+                        {tupf}.language1,
+                        {tupf}.language2,
+                        {tupf}.userid
             FROM {tupf_texts}
             INNER JOIN {tupf}
             ON {tupf_texts}.tupfid = {tupf}.id
@@ -69,6 +76,13 @@ class translate_texts extends \core\task\adhoc_task {
                 $DB->update_record('tupf_texts', $textnew);
 
                 if ($textnew->translationattempts >= TUPF_MAX_TRANSLATION_ATTEMPTS) {
+                    \tupf_send_notification(
+                        'translationerror',
+                        $textnew->userid,
+                        get_string('messageprovider:translationerror', 'tupf'),
+                        get_string('translationerror_body', 'tupf')
+                    );
+
                     mtrace('Text #'.$text->id.' could not be processed (tried '.$textnew->translationattempts.' times).');
                 } else {
                     mtrace('Text #'.$text->id.' could not be processed. Scheduling a new task...');
@@ -96,6 +110,15 @@ class translate_texts extends \core\task\adhoc_task {
             $DB->update_record('tupf_texts', $textnew);
 
             $count++;
+
+            if (!$DB->record_exists('tupf_texts', ['tupfid' => $textnew->tupfid, 'translated' => false])) {
+                \tupf_send_notification(
+                    'translationconfirmation',
+                    $textnew->userid,
+                    get_string('messageprovider:translationconfirmation', 'tupf'),
+                    get_string('translationconfirmation_body', 'tupf')
+                );
+            }
 
             mtrace('Text #'.$text->id.' successfully processed.');
         }
