@@ -106,7 +106,8 @@ if ($reviewingwordindex === false) { // Start review.
         );
 
         if (empty($previousword)) {
-            print_error('notavailable');
+            delete_cache_and_back_home();
+            return;
         }
 
         if ($buttonaction == 'nextcorrect') {
