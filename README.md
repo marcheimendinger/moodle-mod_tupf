@@ -17,6 +17,18 @@ The TUPF activity module for [Moodle](https://moodle.org) enables students to ea
 * Teachers can add new texts and delete existing ones at any time. They cannot edit existing texts.
 * Teachers have access to a report page showing which words are mostly selected by their students.
 
+## Installation
+
+Run these commands from the root of your Moodle installation directory (where are `moodle` and `moodledata`).
+
+```shell
+cd moodle/mod
+git clone https://github.com/marcheimendinger/moodle-mod_tupf
+mv moodle-mod_tupf tupf
+```
+
+After running these commands, go to Moodle home in your Internet browser while being logged in as admin. A page will be presented, asking you to install the plugin and update the database. Simply follow the instructions on screen by confirming everything.
+
 ## Capabilities
 
 Three different capabilities are used by the module.
