@@ -25,7 +25,7 @@ $output = $PAGE->get_renderer('mod_tupf');
 echo $output->header();
 
 if ($textsready) {
-    echo $output->home_admin_top_links();
+    echo $output->admin_top_links();
 
     // Inserts words selection in database if submitted.
     if (!empty($selectedwordsidsstring) &&

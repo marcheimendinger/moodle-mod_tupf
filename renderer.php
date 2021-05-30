@@ -40,33 +40,50 @@ class mod_tupf_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Homepage top links to access admin features.
+     * Top links to access admin features.
+     * Adapted to current page.
      * Displayed only to allowed users.
      *
      * @return string HTML content.
      */
-    public function home_admin_top_links() {
+    public function admin_top_links() {
         global $PAGE;
 
-        $content = '';
+        $buttons = '';
+
+        $homeurl = new moodle_url('/mod/tupf/view.php', ['id' => $PAGE->cm->id]);
+        $reporturl = new moodle_url('/mod/tupf/report.php', ['id' => $PAGE->cm->id]);
+        $edittextsurl = new moodle_url('/mod/tupf/edittexts.php', ['id' => $PAGE->cm->id]);
 
         if (has_capability('mod/tupf:readreport', $PAGE->cm->context)) {
-            $content .= $this->small_action_button(
+            $buttons .= $this->small_action_button(
                 get_string('showreport', 'tupf'),
-                new moodle_url('/mod/tupf/report.php', ['id' => $PAGE->cm->id]),
-                'chart'
+                $reporturl,
+                'chart',
+                $PAGE->url == $reporturl ? 'active' : ''
             );
         }
 
         if (has_capability('mod/tupf:addinstance', $PAGE->cm->context)) {
-            $content .= $this->small_action_button(
+            $buttons .= $this->small_action_button(
                 get_string('edittextsbutton', 'tupf'),
-                new moodle_url('/mod/tupf/edittexts.php', ['id' => $PAGE->cm->id]),
-                'pencil'
+                $edittextsurl,
+                'pencil',
+                $PAGE->url == $edittextsurl ? 'active' : ''
             );
         }
 
-        return empty($content) ? '' : html_writer::div($content, 'btn-group mb-2 mb-sm-0 float-sm-right');
+        if (!empty($buttons)) {
+            $homeButton = $this->small_action_button(
+                get_string('home', 'tupf'),
+                $homeurl,
+                'house-fill',
+                $PAGE->url == $homeurl ? 'active' : ''
+            );
+            $buttons = $homeButton.$buttons;
+        }
+
+        return empty($buttons) ? '' : html_writer::div($buttons, 'btn-group mb-2 mb-sm-0 float-sm-right');
     }
 
     /**
@@ -187,12 +204,21 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         $output = '';
 
-        $output .= $this->small_action_button(
+        $buttons = '';
+
+        $buttons .= $this->small_action_button(
+            get_string('home', 'tupf'),
+            new moodle_url('/mod/tupf/view.php', ['id' => $PAGE->cm->id]),
+            'house-fill'
+        );
+
+        $buttons .= $this->small_action_button(
             get_string('editselectionbutton', 'tupf'),
             new moodle_url('/mod/tupf/editselection.php', ['id' => $PAGE->cm->id]),
-            'pencil',
-            'mb-2 mb-sm-0 float-sm-right'
+            'pencil'
         );
+
+        $output .= html_writer::div($buttons, 'btn-group mb-2 mb-sm-0 float-sm-right');
 
         $output .= $this->output->heading(get_string('selectedwords', 'tupf'), 2);
 
@@ -327,19 +353,9 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * @return string HTML content.
      */
     public function report_heading() {
-        global $PAGE;
-
         $output = '';
 
-        if (has_capability('mod/tupf:addinstance', $PAGE->cm->context)) {
-            $output .= $this->small_action_button(
-                get_string('edittextsbutton', 'tupf'),
-                new moodle_url('/mod/tupf/edittexts.php', ['id' => $PAGE->cm->id]),
-                'pencil',
-                'mb-2 mb-sm-0 float-sm-right'
-            );
-        }
-
+        $output .= $this->admin_top_links();
         $output .= $this->output->heading(get_string('report', 'tupf'), 2);
 
         $output .= html_writer::start_tag('p');
@@ -407,19 +423,9 @@ class mod_tupf_renderer extends plugin_renderer_base {
      * @return string HTML content.
      */
     public function edittexts_heading(bool $translating) {
-        global $PAGE;
-
         $output = '';
 
-        if (has_capability('mod/tupf:readreport', $PAGE->cm->context)) {
-            $output .= $this->small_action_button(
-                get_string('showreport', 'tupf'),
-                new moodle_url('/mod/tupf/report.php', ['id' => $PAGE->cm->id]),
-                'chart',
-                'mb-2 mb-sm-0 float-sm-right',
-            );
-        }
-
+        $output .= $this->admin_top_links();
         $output .= $this->output->heading(get_string('edittexts', 'tupf'), 2);
         $output .= html_writer::tag('p', get_string('edittexts_help', 'tupf'));
 
@@ -552,6 +558,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
             'chevron-left' => '<path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>',
             'exclamation-circle' => '<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>',
             'house' => '<path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>',
+            'house-fill' => '<path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>',
             'list' => '<path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>',
             'pencil' => '<path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>',
             'repeat' => '<path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/><path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>',

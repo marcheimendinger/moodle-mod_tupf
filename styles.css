@@ -4,6 +4,16 @@
  * @package mod_tupf
  */
 
+.btn-group>.btn:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.btn-group>.btn:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
 .tupf-word {
     position: relative;
 }

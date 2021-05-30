@@ -28,6 +28,7 @@ $string['errorpendingtexts'] = 'This activity is not ready yet. Come back in a l
 $string['errorpendingtextsadmin'] = 'This activity is not ready yet. You will be notified when this is done.';
 $string['errortranslationsfailed'] = 'Some texts could not be translated. Delete them and retry.';
 $string['erroraccessdenied'] = 'You don\'t have access to this feature.';
+$string['home'] = 'Home';
 $string['backhome'] = 'Back home';
 
 // Module settings (in `mod_form.php`)
