@@ -14,6 +14,7 @@ $coursemoduleid = required_param('id', PARAM_INT);
 
 $tupf = authenticate_and_get_tupf('/mod/tupf/words.php', $coursemoduleid);
 tupf_texts_ready($tupf->id);
+$textid = tupf_get_selected_text($tupf->id);
 
 $PAGE->navbar->add(get_string('selectedwords', 'tupf'), $PAGE->url);
 
@@ -26,8 +27,8 @@ $words = $DB->get_records_sql(
     FROM {tupf_selected_words}
     INNER JOIN {tupf_words}
     ON {tupf_selected_words}.wordid = {tupf_words}.id
-    WHERE tupfid = ? AND userid = ?',
-    [$tupf->id, $USER->id]
+    WHERE tupfid = ? AND userid = ? AND textid = ?',
+    [$tupf->id, $USER->id, $textid]
 );
 
 if (empty($words)) {

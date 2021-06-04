@@ -82,7 +82,7 @@ if ($textset->valid()) {
     foreach ($textset as $text) {
         $sqluserscount = 'SELECT COUNT(DISTINCT(userid)) AS `count`
         FROM {tupf_words}
-        INNER JOIN mdl_tupf_selected_words
+        INNER JOIN {tupf_selected_words}
         ON {tupf_selected_words}.wordid = {tupf_words}.id
         WHERE textid = ?';
         $userscount = $DB->get_record_sql($sqluserscount, [$text->id])->count;

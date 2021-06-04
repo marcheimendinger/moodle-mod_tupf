@@ -45,6 +45,80 @@ function authenticate_and_get_tupf(string $url, int $coursemoduleid, string $cap
 }
 
 /**
+ * Returns the currently selected text ID from cache.
+ * When no selected text is present, automatically tries to select a text based on words selection.
+ *
+ * @param int $tupfid TUPF instance ID from `tupf` table.
+ * @return int|bool Text ID from `tupf_texts` table or `false` if nonexistent.
+ */
+function tupf_get_selected_text(int $tupfid) {
+    global $DB, $USER;
+
+    $selectedtextidcache = cache::make('mod_tupf', 'selectedtextid');
+    $selectedtextid = $selectedtextidcache->get($tupfid);
+
+    // No selected text. Tries to select the first one with selected words if any.
+    if ($selectedtextid === false) {
+        $sql = 'SELECT {tupf_words}.textid
+        FROM {tupf_words}
+        INNER JOIN {tupf_selected_words}
+        ON {tupf_selected_words}.wordid = {tupf_words}.id
+        WHERE userid = ?
+        GROUP BY {tupf_words}.textid';
+        $firstselectedtextid = $DB->get_record_sql($sql, [$USER->id], IGNORE_MULTIPLE);
+
+        if ($firstselectedtextid !== false) { // At least one text has words selected.
+            $firstselectedtextid = $firstselectedtextid->textid;
+            tupf_set_selected_text($tupfid, $firstselectedtextid);
+            $selectedtextid = $firstselectedtextid;
+        } else {
+            return false;
+        }
+    }
+
+    return $selectedtextid;
+}
+
+/**
+ * Sets the currently selected text ID to cache.
+ *
+ * @param int $tupfid TUPF instance ID from `tupf` table.
+ * @param int $textid Text ID from `tupf_texts` table.
+ * @return void
+ */
+function tupf_set_selected_text(int $tupfid, int $textid) {
+    $selectedtextidcache = cache::make('mod_tupf', 'selectedtextid');
+
+    if ($selectedtextidcache->get($tupfid) !== $textid) {
+        $selectedtextidcache->set($tupfid, $textid);
+
+        // Resets reviewing word index cache to avoid outdated data.
+        $reviewingwordindexcache = cache::make('mod_tupf', 'reviewingwordindex');
+        $reviewingwordindexcache->delete($tupfid);
+    }
+}
+
+/**
+ * Checks whether words are selected for the currently selected text for the current user.
+ *
+ * @param int $tupfid TUPF instance ID from `tupf` table.
+ * @return boolean
+ */
+function tupf_words_are_selected_for_selected_text(int $tupfid): bool {
+    global $DB, $USER;
+
+    $selectedtextid = tupf_get_selected_text($tupfid);
+
+    $sql = 'SELECT {tupf_words}.id
+        FROM {tupf_words}
+        INNER JOIN {tupf_selected_words}
+        ON {tupf_selected_words}.wordid = {tupf_words}.id
+        WHERE textid = ? AND userid = ?';
+
+    return $DB->record_exists_sql($sql, [$selectedtextid, $USER->id]);
+}
+
+/**
  * Checks whether texts are ready for the current TUPF instance.
  *
  * @param int $tupfid TUPF instance ID from `tupf` table.

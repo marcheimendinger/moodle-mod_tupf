@@ -11,6 +11,18 @@ defined('MOODLE_INTERNAL') || die();
 
 $definitions = [
     /**
+     * Contains the currently selected text (for each module instance).
+     *
+     * @key int A TUPF instance ID (`id` from `tupf` table).
+     * @value int A text ID (`id` from `tupf_texts` table).
+     */
+    'selectedtextid' => [
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'simpledata' => true,
+    ],
+
+    /**
      * Contains all words IDs (for each module instance) when a user is reviewing words.
      *
      * @key int A TUPF instance ID (`id` from `tupf` table).

@@ -15,6 +15,7 @@ $buttonaction = optional_param('buttonaction', null, PARAM_ACTION); // 'previous
 
 $tupf = authenticate_and_get_tupf('/mod/tupf/review.php', $coursemoduleid);
 tupf_texts_ready($tupf->id);
+$textid = tupf_get_selected_text($tupf->id);
 
 $PAGE->navbar->add(get_string('wordsreview', 'tupf'), $PAGE->url);
 
@@ -69,11 +70,13 @@ function delete_cache_and_back_home() {
 }
 
 if ($reviewingwordindex === false) { // Start review.
-    $wordsids = array_keys($DB->get_records_menu(
-        'tupf_selected_words',
-        ['tupfid' => $tupf->id, 'userid' => $USER->id],
-        null,
-        'wordid'
+    $wordsids = array_keys($DB->get_records_sql_menu(
+        'SELECT wordid
+        FROM {tupf_selected_words}
+        INNER JOIN {tupf_words}
+        ON {tupf_selected_words}.wordid = {tupf_words}.id
+        WHERE tupfid = ? AND userid = ? AND textid = ?',
+        [$tupf->id, $USER->id, $textid]
     ));
 
     if (empty($wordsids)) {

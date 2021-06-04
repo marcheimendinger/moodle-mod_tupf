@@ -58,7 +58,7 @@ $string['translationerror_link'] = 'Edit texts';
 $string['startselection'] = 'Select Words';
 $string['startreview'] = 'Start reviewing words';
 $string['resumereview'] = 'Continue reviewing words';
-$string['displaywordslist'] = 'Show all selected words';
+$string['displaywordslist'] = 'Show words selection';
 
 // `review.php`
 $string['wordsreview'] = 'Words Review';
@@ -70,12 +70,12 @@ $string['reviewend'] = 'Good job! You reviewed all your words.';
 $string['restartreview'] = 'Restart reviewing words';
 
 // `words.php`
-$string['selectedwords'] = 'Selected Words';
-$string['correctpercentage'] = 'Correct Percentage';
+$string['selectedwords'] = 'Selection';
+$string['correctpercentage'] = 'Your Correct Percentage';
 $string['editselectionbutton'] = 'Edit selection';
 
 // `editselection.php`
-$string['editselection'] = 'Edit Selected Words';
+$string['editselection'] = 'Edit Selection';
 $string['editselection_help'] = 'Click on words you don\'t know and you want to learn. You can click again to deselect a word. When you\'re happy with your selection, click on Submit below the text.';
 
 // `report.php`

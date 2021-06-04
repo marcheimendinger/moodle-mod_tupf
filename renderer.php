@@ -105,14 +105,14 @@ class mod_tupf_renderer extends plugin_renderer_base {
     /**
      * Homepage buttons for standard user.
      *
-     * @param string $tupfname Module instance name.
+     * @param string $title Heading title.
      * @param bool $reviewingwords Whether the user is currently reviewing words.
      * @return string HTML content.
      */
-    public function home_buttons(string $tupfname, bool $reviewingwords) {
+    public function home_buttons(string $title, bool $reviewingwords) {
         $output = '';
 
-        $output .= $this->output->heading($tupfname, 2);
+        $output .= $this->output->heading($title, 2);
 
         $output .= $this->buttons([
             [
@@ -126,6 +126,56 @@ class mod_tupf_renderer extends plugin_renderer_base {
                 'icon' => 'list',
             ],
         ]);
+
+        return $output;
+    }
+
+    /**
+     * A dropdown to select a text.
+     *
+     * @param integer $tupfid TUPF instance ID from `tupf` table.
+     * @param array $textsids A list of texts IDs (integers) from `tupf_texts` table.
+     * @return string HTML content.
+     */
+    public function text_selection(int $tupfid, array $textsids) {
+        require_once('locallib.php');
+
+        $selectedtextid = tupf_get_selected_text($tupfid);
+
+        $output = '';
+
+        $output .= html_writer::start_tag('form', [
+            'id' => 'tupf-text-selection-form',
+            'action' => $this->page->url,
+            'method' => 'post',
+            'class' => 'mb-2'
+        ]);
+
+        $output .= html_writer::tag('input', '', [
+            'type' => 'hidden',
+            'name' => 'sesskey',
+            'value' => sesskey(),
+        ]);
+
+        $output .= html_writer::start_tag('select', [
+            'name' => 'selected-text',
+            'id' => 'selected-text',
+            'onchange' => 'this.form.submit()'
+        ]);
+
+        $counter = 1;
+        foreach ($textsids as $textid) {
+            $options = ['value' => $textid];
+            if ($textid == $selectedtextid) {
+                $options['selected'] = true;
+            }
+            $output .= html_writer::tag('option', 'Text '.$counter, $options);
+            $counter++;
+        }
+
+        $output .= html_writer::end_tag('select');
+
+        $output .= html_writer::end_tag('form');
 
         return $output;
     }
