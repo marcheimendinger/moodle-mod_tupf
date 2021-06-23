@@ -38,6 +38,7 @@ class mod_tupf_mod_form extends moodleform_mod {
             $readonly = $repeatno > 0;
             $repeatno = $readonly ? $repeatno : 5;
         } else {
+            $readonly = false;
             $repeatno = 5;
         }
 

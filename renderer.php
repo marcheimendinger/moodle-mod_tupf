@@ -97,7 +97,7 @@ class mod_tupf_renderer extends plugin_renderer_base {
 
         return $this->buttons([[
             'file' => 'edittexts.php',
-            'text' => $icon.get_string('edittextsbutton', 'tupf'),
+            'text' => get_string('edittextsbutton', 'tupf'),
             'icon' => 'pencil',
         ]]);
     }
